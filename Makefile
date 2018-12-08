@@ -1,9 +1,19 @@
 include Makefile.config
 
-SUBDIRS := $(wildcard */.)
+#global variables exports
+export TOPDIR = $(shell realpath .)
+export BUILD_DIR := $(TOPDIR)/build
 
-all: $(SUBDIRS)
+
+TMPSUBDIRS := $(wildcard */.)
+SUBDIRS = $(filter-out build/.,$(TMPSUBDIRS))
+
+all: prepare $(SUBDIRS)
+
 $(SUBDIRS):
-	$(MAKE) -C $@
+	@$(MAKE) -C $@
 
-.PHONY: all $(SUBDIRS)
+prepare:
+	@mkdir $(BUILD_DIR) | true
+
+.PHONY: all $(SUBDIRS) prepare
