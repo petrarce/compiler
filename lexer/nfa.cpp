@@ -2,6 +2,9 @@
 #include <string>
 #include <cstring>
 
+class inv_arg_ex inv_arg_ex_obj;
+class empty_str_ex empty_str_ex_obj;
+
 inline opcode nfa::deinit_tr_res(tr_res_t& tr)
 {
 	free(tr.states);
@@ -65,24 +68,29 @@ opcode nfa::transition_f(uint32_t state, char* str)
 	}
 
 	tr_res_t tr_list = transition_get_next_states(state, str[0]);
-	for(int i = 0; i < tr_list.state_count; i++){
-		status = transition_f(tr_list.states[i], str+1);
+	try{
+		for(int i = 0; i < tr_list.state_count; i++){
+			status = transition_f(tr_list.states[i], str+1);
 
-		if(STATUS_INVALID_ARG == status){
-			deinit_tr_res(tr_list);
-			return STATUS_INVALID_ARG;
-		}
+			if(STATUS_INVALID_ARG == status){
+				throw inv_arg_ex_obj;
+			}
 
-		if(STATUS_STRING_IS_EMPTY == status){
+			if(STATUS_STRING_IS_EMPTY == status){
 
-			if(this->accepted){
-				deinit_tr_res(tr_list);
-				return STATUS_STRING_IS_EMPTY;
+				if(this->accepted){
+					break;
+				}
 			}
 		}
 	}
+	catch (inv_arg_ex& e){
+		e.print_ex("invalid argument was received");
+		status = STATUS_INVALID_ARG;
+
+	}
 	deinit_tr_res(tr_list);
-	return STATUS_OK;
+	return status;
 }
 
 
@@ -95,16 +103,25 @@ opcode nfa::link_state(uint32_t state1, char symb, uint32_t state2)
 
 uint8_t nfa::nfa_run(char* str)
 {
-	uint8_t res;
+	uint8_t res = 0;
 	opcode status;
-	status = nfa_reset();
-	status = transition_f(this->cur_state, str);
-	if(this->accepted)
-		res = 1;
-	else
-		res = 0;
-	return res;
+	try{
+		if(!str)
+			throw empty_str_ex_obj;
+		status = nfa_reset();
+		status = transition_f(this->cur_state, str);
+		if(this->accepted)
+			res = 1;
+		else
+			res = 0;
+	}
+	catch(empty_str_ex& e)
+	{
+		e.print_ex("currently string is empty");
+		throw exception();
+	}
 
+	return res;
 }
 
 opcode nfa::nfa_reset()

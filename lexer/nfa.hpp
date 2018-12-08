@@ -3,6 +3,7 @@
 #include "state.hpp"
 #include <cstdint>
 #include <cstdlib>
+#include <iostream>
 
 using namespace std;
 
@@ -42,3 +43,22 @@ public:
 	~nfa();
 
 };
+
+class alph_ex : exception
+{
+public:
+	void print_ex(char* err_str)	{cout << "ALPHABET_FAILURE:" << err_str << endl;}
+};
+class inv_arg_ex : exception
+{
+public:
+
+	void print_ex(char* err_str)	{cout << "INVALID ARGUMENT:" << err_str << endl;}
+};
+class empty_str_ex: exception
+{
+public:
+	void print_ex(char* err_str)	{cout << "STRING IS EMPTY:" << err_str << endl;}
+
+};
+
