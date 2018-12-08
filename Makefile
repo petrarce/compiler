@@ -1,8 +1,9 @@
 include Makefile.config
 
-src-{CONFIG_LEXER} = lexer
+SUBDIRS := $(wildcard */.)
 
 all: $(SUBDIRS)
-	$(MAKE) $@
+$(SUBDIRS):
+	$(MAKE) -C $@
 
 .PHONY: all $(SUBDIRS)
