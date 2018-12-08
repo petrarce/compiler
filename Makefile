@@ -3,7 +3,7 @@ include Makefile.config
 #global variables exports
 export TOPDIR = $(shell realpath .)
 export BUILD_DIR := $(TOPDIR)/build
-export CXXFLAGS += -I$(TOPDIR)/include
+export CXXFLAGS += -I$(TOPDIR)/include -g
 
 SUBDIRS = lexer
 

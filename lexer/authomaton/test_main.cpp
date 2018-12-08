@@ -7,13 +7,16 @@ int main(int argc, char** argv)
 {
 
 	int res;
-	nfa new_nfa(5, "ab");
-	new_nfa.link_state(0, 'a', 1);
-	new_nfa.link_state(1, 'b', 2);
-	new_nfa.link_state(0, 'a', 3);
+	nfa new_nfa(6, "ab");
+	new_nfa.link_state(0, '@', 1);
+	new_nfa.link_state(0, '@', 3);
+	new_nfa.link_state(1, 'a', 2);
+	new_nfa.link_state(2, 'b', 3);
 	new_nfa.link_state(3, 'a', 4);
-	new_nfa.set_accepting(4);
-	new_nfa.set_accepting(2);
+	new_nfa.link_state(4, 'a', 5);
+
+	new_nfa.set_accepting(3);
+	new_nfa.set_accepting(5);
 
 
 	try{

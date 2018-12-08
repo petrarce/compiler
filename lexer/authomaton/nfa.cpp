@@ -52,6 +52,26 @@ tr_res_t nfa::transition_get_next_states(uint32_t state, uint8_t symb)
 	return tr;
 }
 
+opcode nfa::goto_next_transitions(tr_res_t& tr_list, char* str){
+	opcode status;
+
+	for(int i = 0; i < tr_list.state_count; i++){
+		status = transition_f(tr_list.states[i], str);
+
+		if(STATUS_INVALID_ARG == status){
+			throw inv_arg_ex_obj;
+		}
+
+		if(STATUS_STRING_IS_EMPTY == status){
+
+			if(this->accepted){
+				break;
+			}
+		}
+	}
+	return status;
+}
+
 opcode nfa::transition_f(uint32_t state, char* str)
 {
 	opcode status;
@@ -67,29 +87,22 @@ opcode nfa::transition_f(uint32_t state, char* str)
 		return STATUS_STRING_IS_EMPTY;
 	}
 
-	tr_res_t tr_list = transition_get_next_states(state, str[0]);
 	try{
-		for(int i = 0; i < tr_list.state_count; i++){
-			status = transition_f(tr_list.states[i], str+1);
-
-			if(STATUS_INVALID_ARG == status){
-				throw inv_arg_ex_obj;
-			}
-
-			if(STATUS_STRING_IS_EMPTY == status){
-
-				if(this->accepted){
-					break;
-				}
-			}
+		tr_res_t tr_list = transition_get_next_states(state, str[0]);
+		status = goto_next_transitions(tr_list, str+1);
+		//if not matched any of previous paterns try to make eps transition
+		if(!this->states[this->cur_state].is_accepting){
+			deinit_tr_res(tr_list);
+			tr_list = transition_get_next_states(state, '@');
+			status = goto_next_transitions(tr_list, str);
 		}
+		deinit_tr_res(tr_list);
 	}
 	catch (inv_arg_ex& e){
 		e.print_ex("invalid argument was received");
 		status = STATUS_INVALID_ARG;
 
 	}
-	deinit_tr_res(tr_list);
 	return status;
 }
 

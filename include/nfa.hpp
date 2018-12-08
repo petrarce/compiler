@@ -30,6 +30,7 @@ private:
 	opcode init_tr_result(tr_res_t& tr);
 	opcode deinit_tr_res(tr_res_t& tr);
 
+	opcode goto_next_transitions(tr_res_t& tr_list, char* str);
 	opcode transition_f(uint32_t state, char* str);
 	tr_res_t transition_get_next_states(uint32_t state, uint8_t symb);
 public:
