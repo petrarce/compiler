@@ -1,4 +1,4 @@
-SUBDIRS := $(wildcard */.)
+SUBDIRS := authomaton
 
 all: $(SUBDIRS)
 $(SUBDIRS):

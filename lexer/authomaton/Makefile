@@ -1,4 +1,5 @@
 #set CONFIG_TEST=y to build test application for the sources
+$(info CFLAGS=$(CFLAGS))
 
 objects = $(subst 	cpp,o,$(shell find *.cpp))
 ifeq ($(CONFIG_TEST),y)
@@ -13,9 +14,9 @@ endif
 all: build install
 build:  $(objects)
 ifeq ($(CONFIG_TEST),y)
-	@$(CXX) -g -o test_main $(objects)
+	$(CXX) $(CFLAGS) -o test_main $(objects)
 else
-	@$(AR) rcs $(target) $(objects)
+	$(AR) rcs $(target) $(objects)
 endif 
 install:
-	@cp $(target) $(BUILD_DIR)
+	cp $(target) $(BUILD_DIR)

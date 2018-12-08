@@ -1,5 +1,5 @@
-#include "state.hpp"
-#include "nfa.hpp"
+#include <state.hpp>
+#include <nfa.hpp>
 #include <cstdio>
 #include <cstring>
 

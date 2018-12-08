@@ -3,10 +3,9 @@ include Makefile.config
 #global variables exports
 export TOPDIR = $(shell realpath .)
 export BUILD_DIR := $(TOPDIR)/build
+export CXXFLAGS += -I$(TOPDIR)/include
 
-
-TMPSUBDIRS := $(wildcard */.)
-SUBDIRS = $(filter-out build/.,$(TMPSUBDIRS))
+SUBDIRS = lexer
 
 all: prepare $(SUBDIRS)
 

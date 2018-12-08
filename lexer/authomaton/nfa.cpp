@@ -1,4 +1,4 @@
-#include "nfa.hpp"
+#include <nfa.hpp>
 #include <string>
 #include <cstring>
 
