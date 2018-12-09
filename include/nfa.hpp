@@ -5,6 +5,8 @@
 #include <cstdlib>
 #include <iostream>
 
+#define EPS '@'
+
 using namespace std;
 
 typedef struct tr_res_s

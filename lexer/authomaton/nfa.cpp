@@ -93,7 +93,7 @@ opcode nfa::transition_f(uint32_t state, char* str)
 		//if not matched any of previous paterns try to make eps transition
 		if(!this->states[this->cur_state].is_accepting){
 			deinit_tr_res(tr_list);
-			tr_list = transition_get_next_states(state, '@');
+			tr_list = transition_get_next_states(state, EPS);
 			status = goto_next_transitions(tr_list, str);
 		}
 		deinit_tr_res(tr_list);

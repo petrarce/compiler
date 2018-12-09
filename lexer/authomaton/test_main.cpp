@@ -3,20 +3,26 @@
 #include <cstdio>
 #include <cstring>
 
+enum {
+	a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t
+};
+#define X "abcd"
+
 int main(int argc, char** argv)
 {
 
 	int res;
-	nfa new_nfa(6, "ab");
-	new_nfa.link_state(0, '@', 1);
-	new_nfa.link_state(0, '@', 3);
-	new_nfa.link_state(1, 'a', 2);
-	new_nfa.link_state(2, 'b', 3);
-	new_nfa.link_state(3, 'a', 4);
-	new_nfa.link_state(4, 'a', 5);
-
-	new_nfa.set_accepting(3);
-	new_nfa.set_accepting(5);
+	char* alph = "/*abcd";
+	nfa new_nfa(7, alph);
+	new_nfa.link_state(0, '/', 1);
+	new_nfa.link_state(1, '*', 2);
+	new_nfa.link_state(2, X, 3);
+	new_nfa.link_state(2, EPS, 4);
+	new_nfa.link_state(3, EPS, 4);
+	new_nfa.link_state(3, EPS, 2);
+	new_nfa.link_state(4, '*', 5);
+	new_nfa.link_state(5, '/', 6);
+	new_nfa.set_accepting(6);
 
 
 	try{
