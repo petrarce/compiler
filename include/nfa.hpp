@@ -41,6 +41,7 @@ public:
 	opcode set_accepting(uint32_t state);
 	
 	uint8_t nfa_run(char*);
+	uint8_t nfa_run_step(char);
 	opcode nfa_reset();
 
 	nfa(uint32_t states_count, char* alphabet);

@@ -148,6 +148,18 @@ uint8_t nfa::nfa_run(char* str)
 	return res;
 }
 
+uint8_t nfa::nfa_run_step(char symb)
+{
+	char str[2] = {symb, 0};
+	opcode status;
+	
+	status = transition_f(this->cur_state, str);
+	if(this->accepted)
+		return 1;
+	else
+		return 0;
+}
+
 opcode nfa::nfa_reset()
 {
 	this->cur_state = 0;
