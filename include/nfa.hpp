@@ -35,6 +35,7 @@ private:
 	tr_res_t transition_get_next_states(uint32_t state, uint8_t symb);
 public:
 	opcode link_state(uint32_t state1, char symb, uint32_t state2);
+	opcode link_state(uint32_t state1, char* symbs, uint32_t state2);
 	opcode set_accepting(uint32_t state);
 	
 	uint8_t nfa_run(char*);

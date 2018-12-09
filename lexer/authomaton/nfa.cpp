@@ -114,6 +114,17 @@ opcode nfa::link_state(uint32_t state1, char symb, uint32_t state2)
 	return status;
 }
 
+opcode nfa::link_state(uint32_t state1, char* symbs, uint32_t state2)
+{
+	opcode status;
+	size_t symb_sz = strlen(symbs);
+	for(int i = 0; i < symb_sz; i++)
+		link_state(state1, symbs[i], state2);
+
+	return status;
+}
+
+
 uint8_t nfa::nfa_run(char* str)
 {
 	uint8_t res = 0;
