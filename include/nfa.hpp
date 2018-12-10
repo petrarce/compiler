@@ -23,12 +23,13 @@ private:
 	opcode deinit_cur_state_list();
 
 
-	opcode goto_next_transitions(vector<uint32_t> &, char*);
-	opcode transition_f(uint32_t , char* );
+	void nfa_clause();
 	vector<uint32_t>  transition_get_next_states(uint32_t , uint8_t );
 public:
 	opcode link_state(uint32_t , char , uint32_t );
-	opcode link_state(uint32_t , char* , uint32_t );
+	opcode link_state(uint32_t , string , uint32_t );
+	opcode link_state(string);
+
 	opcode set_accepting(uint32_t );
 	
 	void nfa_next(char);

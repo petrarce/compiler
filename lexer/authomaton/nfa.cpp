@@ -76,14 +76,61 @@ opcode nfa::link_state(uint32_t state1, char symb, uint32_t state2)
 	return status;
 }
 
-opcode nfa::link_state(uint32_t state1, char* symbs, uint32_t state2)
+opcode nfa::link_state(uint32_t state1, string symbs, uint32_t state2)
 {
 	opcode status;
-	size_t symb_sz = strlen(symbs);
-	for(int i = 0; i < symb_sz; i++)
-		link_state(state1, symbs[i], state2);
+	//if string is empty link failed states with eps transition
+	if(!symbs.size())
+		link_state(state1, EPS, state2);
+
+	for(char c : symbs)
+		link_state(state1, c, state2);
 
 	return status;
+}
+
+//simple input parser overload
+//regex for parser: [0-9][0-9]*@X*@[0-9][0-9]*;
+opcode nfa::link_state(string str)
+{
+	uint8_t state = 0;
+	string st1, st2, symbs;
+
+	for (char c : str){
+		if( '0' <= c && c <= '9' && state == 0 ){
+			state = 1;
+			st1.push_back(c);
+		}else if('0'<= c && c <= '9' && state == 1){
+			st1.push_back(c);
+		}else if (c == '@' && state == 1){
+			state = 2;
+		}else if (c != '@' && state == 2)
+			symbs.push_back(c);
+		else if (c == '@' && state == 2)
+			state = 3;
+		else if ('0' <= c && c <= '9' && state == 3){
+			state = 4;
+			st2.push_back(c);
+		}else if ('0' <= c && c <= '9' && state == 4)
+			st2.push_back(c);
+		else if (c == ';' && state == 4){
+			state = 0;
+			link_state(stoi(st1), symbs, stoi(st2));
+			st1.clear();
+			st2.clear();
+			symbs.clear();
+		} else
+		{
+			cout << "failed to parse string";
+			exit(STATUS_NOK);
+		}
+
+	}
+	if(state != 0){
+		cout << "incorrect parsing string, please recheck" << endl ;
+		exit(STATUS_NOK);
+	}
+	return STATUS_OK;
 }
 
 
@@ -116,16 +163,28 @@ uint8_t nfa::nfa_status()
 
 }
 
+void nfa::nfa_clause()
+{
+	vector<uint32_t> tmp_state_list;
+	vector<uint32_t> tmp_states_eps;
+	tmp_state_list = this->cur_state_list;
+	do{
+		this->cur_state_list = tmp_state_list;
+		for(uint32_t st : this->cur_state_list){
+			tmp_states_eps = transition_get_next_states(st, EPS);
+			my_set_union(tmp_state_list, tmp_states_eps);
+		}
+	}while(this->cur_state_list != tmp_state_list);
+
+}
 
 void nfa::nfa_next(char symb)
 {
 	vector<uint32_t> new_cur_state_list;
-
+	
+	nfa_clause();
 	for (uint32_t state : this->cur_state_list){
 		vector<uint32_t> tmp_states = transition_get_next_states(state, symb);
-		vector<uint32_t> tmp_states_eps = transition_get_next_states(state, EPS);
-		
-		my_set_union(tmp_states, tmp_states_eps);
 
 		my_set_union(new_cur_state_list, tmp_states);
 	}
