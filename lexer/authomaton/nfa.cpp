@@ -76,7 +76,7 @@ opcode nfa::link_state(uint32_t state1, char symb, uint32_t state2)
 	return status;
 }
 
-opcode nfa::link_state(uint32_t state1, string symbs, uint32_t state2)
+opcode nfa::link_state(uint32_t state1, string& symbs, uint32_t state2)
 {
 	opcode status;
 	//if string is empty link failed states with eps transition
@@ -90,8 +90,8 @@ opcode nfa::link_state(uint32_t state1, string symbs, uint32_t state2)
 }
 
 //simple input parser overload
-//regex for parser: [0-9][0-9]*@X*@[0-9][0-9]*;
-opcode nfa::link_state(string str)
+//regex for parser: [0-9][0-9]*@X*@[0-9][0-9]* 
+opcode nfa::link_state(string& str)
 {
 	uint8_t state = 0;
 	string st1, st2, symbs;
@@ -113,7 +113,7 @@ opcode nfa::link_state(string str)
 			st2.push_back(c);
 		}else if ('0' <= c && c <= '9' && state == 4)
 			st2.push_back(c);
-		else if (c == ';' && state == 4){
+		else if (c == '\\' && state == 4){
 			state = 0;
 			link_state(stoi(st1), symbs, stoi(st2));
 			st1.clear();
@@ -121,7 +121,7 @@ opcode nfa::link_state(string str)
 			symbs.clear();
 		} else
 		{
-			cout << "failed to parse string";
+			cout << "failed to parse string" << symbs << endl;
 			exit(STATUS_NOK);
 		}
 
@@ -134,7 +134,7 @@ opcode nfa::link_state(string str)
 }
 
 
-void nfa::nfa_run(string str)
+void nfa::nfa_run(string& str)
 {
 	int32_t res = 0;
 	opcode status;
@@ -186,43 +186,49 @@ void nfa::nfa_bt_log_save(uint32_t state,uint32_t position)
 	this->bt_log.push_back(entry);
 }
 
-opcode nfa::set_delimiters(string del)
-{
-	this->delimiters = del;
-}
-
-uint8_t nfa::nfa_bt_run(string token)
+opcode nfa::nfa_bt_next(string& token)
 {
 	uint32_t state;
 	vector<uint32_t> tmp_bt_log;
 
-	while(token.size()){
-		nfa_reset();
-		for (int i = 0; i < token.size(); i++){
-			nfa_next(token[i]);
-			sort(this->cur_state_list.begin(), this->cur_state_list.end());
-			state = nfa_status();
-			if(state){
-				nfa_bt_log_save(state, i);
-			} else if(!this->cur_state_list.size()){ //check if our autometon is still allive if still allive - continue
-				break;
-			}
+	nfa_reset();
+	for (int i = 0; i < token.size(); i++){
+		nfa_next(token[i]);
+		sort(this->cur_state_list.begin(), this->cur_state_list.end());
+		state = nfa_status();
+		if(state){
+			nfa_bt_log_save(state, i);
+		} else if(!this->cur_state_list.size()){ //check if our autometon is still allive if still allive - continue
+			break;
 		}
-
-		if(!this->bt_log.size()){			//if dead - check if in backlog there was etlist one accepting state
-
-			cout << "string is incorrect" << endl;	//if previously no accepted states was entered - lexical analysis failed
-			return -1;
-		}
-		tmp_bt_log = bt_log.back();					//if was - we pring latest accepted analysis, and remove regarding string from nput
-		bt_log.clear();
-		cout << "(" << string(token.begin(),token.begin()+tmp_bt_log[1]+1) << ", " << this->states[tmp_bt_log[0]].analyse << ") ";
-		token.erase(0, tmp_bt_log[1]+1);
-
 	}
 
+	if(!this->bt_log.size()){			//if dead - check if in backlog there was etlist one accepting state
 
+		cout << "string is incorrect" << endl;	//if previously no accepted states was entered - lexical analysis failed
+		return STATUS_NOK;
+	}
+	tmp_bt_log = bt_log.back();					//if was - we pring latest accepted analysis, and remove regarding string from nput
+	bt_log.clear();
+	if(this->states[tmp_bt_log[0]].analyse!= "DELIM")
+		cout 	<< "(\"" 
+				<< string(token.begin(),token.begin()+tmp_bt_log[1]+1) 
+				<< "\", " 
+				<< this->states[tmp_bt_log[0]].analyse << ") " 
+				<< endl;
+	token.erase(0, tmp_bt_log[1]+1);
+	return STATUS_OK;
 
+}
+opcode nfa::nfa_bt_run(string& token)
+{
+	opcode state;
+	while(token.size()){
+		state = nfa_bt_next(token);
+		if(state == STATUS_NOK)
+			return STATUS_NOK;
+	}
+	return STATUS_OK;
 }
 void nfa::nfa_next(char symb)
 {
@@ -242,6 +248,13 @@ opcode nfa::nfa_reset()
 	init_cur_state_list();
 	bt_log.clear();
 	return STATUS_OK;
+}
+opcode nfa::set_accepting(vector<uint32_t> states, string str)
+{
+	for(uint32_t st : states){
+		this->states[st].is_accepting 	= true;
+		this->states[st].analyse		= str;
+	}
 }
 
 opcode nfa::set_accepting(uint32_t state, string str)

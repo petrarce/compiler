@@ -30,16 +30,16 @@ private:
 	void nfa_bt_log_save(uint32_t state,uint32_t position);
 public:
 	opcode link_state(uint32_t , char , uint32_t );
-	opcode link_state(uint32_t , string , uint32_t );
-	opcode link_state(string);
+	opcode link_state(uint32_t , string& , uint32_t );
+	opcode link_state(string&);
 
 	opcode set_accepting(uint32_t, string);
-	opcode set_accepting(vector<uint32_t>& );
-	opcode set_delimiters(string);
+	opcode set_accepting(vector<uint32_t> , string);
 
 	void nfa_next(char);
-	void nfa_run(string);
-	uint8_t nfa_bt_run(string);
+	void nfa_run(string&);
+	opcode nfa_bt_next(string&);
+	opcode nfa_bt_run(string&);
 	uint32_t nfa_status();
 	opcode nfa_reset();
 
