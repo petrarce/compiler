@@ -4,44 +4,36 @@
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
+#include <vector>
 
 #define EPS '@'
 
 using namespace std;
 
-typedef struct tr_res_s
-{
-	uint32_t state_count;
-	uint32_t* states;
-}tr_res_t;
-
 class nfa
 {
 private:
 	char alphabet[256];
-
-
 	uint32_t states_count;
 	state_c* states;
-
-	uint32_t cur_state;
-
-	uint8_t accepted;
+	vector<uint32_t> cur_state_list;
 private:
 
-	opcode init_tr_result(tr_res_t& tr);
-	opcode deinit_tr_res(tr_res_t& tr);
+	opcode init_cur_state_list();
+	opcode deinit_cur_state_list();
 
-	opcode goto_next_transitions(tr_res_t& tr_list, char* str);
-	opcode transition_f(uint32_t state, char* str);
-	tr_res_t transition_get_next_states(uint32_t state, uint8_t symb);
+
+	opcode goto_next_transitions(vector<uint32_t> &, char*);
+	opcode transition_f(uint32_t , char* );
+	vector<uint32_t>  transition_get_next_states(uint32_t , uint8_t );
 public:
-	opcode link_state(uint32_t state1, char symb, uint32_t state2);
-	opcode link_state(uint32_t state1, char* symbs, uint32_t state2);
-	opcode set_accepting(uint32_t state);
+	opcode link_state(uint32_t , char , uint32_t );
+	opcode link_state(uint32_t , char* , uint32_t );
+	opcode set_accepting(uint32_t );
 	
-	uint8_t nfa_run(char*);
-	uint8_t nfa_run_step(char);
+	void nfa_next(char);
+	void nfa_run(string);
+	uint8_t nfa_status();
 	opcode nfa_reset();
 
 	nfa(uint32_t states_count, char* alphabet);

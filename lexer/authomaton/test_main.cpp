@@ -13,6 +13,9 @@ int main(int argc, char** argv)
 
 	int res;
 	char* alph = "/*abcd";
+	if(argc != 2)
+		return -1;
+	string inp_str(argv[1]);
 	nfa new_nfa(7, alph);
 	new_nfa.link_state(0, '/', 1);
 	new_nfa.link_state(1, '*', 2);
@@ -26,8 +29,9 @@ int main(int argc, char** argv)
 
 
 	try{
-		uint8_t st = new_nfa.nfa_run((argc == 2 && strlen(argv[1]))?argv[1]:NULL);
-		printf("%s, is %s\n", argv[1], (st)?"accepted":"denied");
+		uint8_t st;
+		new_nfa.nfa_run(inp_str);
+		printf("%s, is %s\n", argv[1], (new_nfa.nfa_status())?"accepted":"denied");
 	}
 	catch(exception& e){
 		cout << "EXITING DUE TO PREVIOUS EXCEPTIONS" << endl;
