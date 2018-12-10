@@ -191,51 +191,36 @@ opcode nfa::set_delimiters(string del)
 	this->delimiters = del;
 }
 
-uint8_t nfa::nfa_bt_run(string str)
+uint8_t nfa::nfa_bt_run(string token)
 {
 	uint32_t state;
 	vector<uint32_t> tmp_bt_log;
-	nfa_reset();
-	while(str.size()){
-		
-		if(find(this->delimiters.begin(), this->delimiters.end(), str[0]) != this->delimiters.end()){
-			str.erase(str.begin(), str.begin()+1);
-			continue;
+
+	while(token.size()){
+		nfa_reset();
+		for (int i = 0; i < token.size(); i++){
+			nfa_next(token[i]);
+			sort(this->cur_state_list.begin(), this->cur_state_list.end());
+			state = nfa_status();
+			if(state){
+				nfa_bt_log_save(state, i);
+			} else if(!this->cur_state_list.size()){ //check if our autometon is still allive if still allive - continue
+				break;
+			}
 		}
 
-		auto del_pos = find_first_of(str.begin(), str.end(), this->delimiters.begin(), this->delimiters.end());
-		string token(str.begin(), del_pos);
-		if(del_pos == str.end())
- 			str.erase(str.begin(), del_pos);
- 		else
-			str.erase(str.begin(), del_pos+1);
+		if(!this->bt_log.size()){			//if dead - check if in backlog there was etlist one accepting state
 
-		while(token.size()){
-			for (int i = 0; i < token.size(); i++){
-				nfa_next(token[i]);
-				sort(this->cur_state_list.begin(), this->cur_state_list.end());
-				state = nfa_status();
-				if(state){
-					nfa_bt_log_save(state, i);
-				} else if(!this->cur_state_list.size()){ //check if our autometon is still allive if still allive - continue
-					break;
-				}
-			}
-
-			if(!this->bt_log.size()){			//if dead - check if in backlog there was etlist one accepting state
-
-				cout << "string is incorrect" << endl;	//if previously no accepted states was entered - lexical analysis failed
-				return -1;
-			}
-			tmp_bt_log = bt_log.back();					//if was - we pring latest accepted analysis, and remove regarding string from nput
-			bt_log.clear();
-			cout << "(" << string(token.begin(),token.begin()+tmp_bt_log[1]+1) << ", " << this->states[tmp_bt_log[0]].analyse << ") ";
-			token.erase(0, tmp_bt_log[1]+1);
-			nfa_reset();
-
+			cout << "string is incorrect" << endl;	//if previously no accepted states was entered - lexical analysis failed
+			return -1;
 		}
+		tmp_bt_log = bt_log.back();					//if was - we pring latest accepted analysis, and remove regarding string from nput
+		bt_log.clear();
+		cout << "(" << string(token.begin(),token.begin()+tmp_bt_log[1]+1) << ", " << this->states[tmp_bt_log[0]].analyse << ") ";
+		token.erase(0, tmp_bt_log[1]+1);
 
 	}
+
 
 
 }
