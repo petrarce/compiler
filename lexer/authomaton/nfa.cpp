@@ -6,7 +6,7 @@
 class inv_arg_ex inv_arg_ex_obj;
 class empty_str_ex empty_str_ex_obj;
 
-static void my_set_union(vector<uint32_t>& dest, vector<uint32_t> src)
+static void my_set_union(vector<uint32_t>& dest, vector<uint32_t>& src)
 {
 	uint8_t st1_is_in_set = 0;
 
@@ -51,8 +51,8 @@ vector<uint32_t> nfa::transition_get_next_states(uint32_t state, uint8_t symb)
 	if(!this->states[state].transition_table[symb])
 		return states_id;
 
-	state_c** 			states = this->states[state].transition_table[symb]->states;
-	auto 				state_count = this->states[state].transition_table[symb]->state_count;
+	state_c** 	states = this->states[state].transition_table[symb]->states;
+	auto 		state_count = this->states[state].transition_table[symb]->state_count;
 
 	//in transition table can be empty at this point (means, that any further transition leads to dead state)
 	if(!this->states[state].transition_table[symb])
