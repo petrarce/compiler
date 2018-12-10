@@ -17,6 +17,8 @@ private:
 	uint32_t states_count;
 	state_c* states;
 	vector<uint32_t> cur_state_list;
+	vector<vector<uint32_t>> bt_log;
+	string delimiters;
 private:
 
 	opcode init_cur_state_list();
@@ -25,17 +27,23 @@ private:
 
 	void nfa_clause();
 	vector<uint32_t>  transition_get_next_states(uint32_t , uint8_t );
+	void nfa_bt_log_save(uint32_t state,uint32_t position);
 public:
 	opcode link_state(uint32_t , char , uint32_t );
 	opcode link_state(uint32_t , string , uint32_t );
 	opcode link_state(string);
 
-	opcode set_accepting(uint32_t );
-	
+	opcode set_accepting(uint32_t, string);
+	opcode set_accepting(vector<uint32_t>& );
+	opcode set_delimiters(string);
+
 	void nfa_next(char);
 	void nfa_run(string);
-	uint8_t nfa_status();
+	uint8_t nfa_bt_run(string);
+	uint32_t nfa_status();
 	opcode nfa_reset();
+
+
 
 	nfa(uint32_t states_count, char* alphabet);
 	~nfa();

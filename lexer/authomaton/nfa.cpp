@@ -153,11 +153,11 @@ void nfa::nfa_run(string str)
 
 }
 
-uint8_t nfa::nfa_status()
+uint32_t nfa::nfa_status()
 {
 	for(uint32_t state : this->cur_state_list){
 		if (this->states[state].is_accepting)
-			return 1;
+			return state;
 	}
 	return 0;
 
@@ -178,6 +178,67 @@ void nfa::nfa_clause()
 
 }
 
+void nfa::nfa_bt_log_save(uint32_t state,uint32_t position)
+{
+	vector<uint32_t> entry;
+	entry.push_back(state);
+	entry.push_back(position);
+	this->bt_log.push_back(entry);
+}
+
+opcode nfa::set_delimiters(string del)
+{
+	this->delimiters = del;
+}
+
+uint8_t nfa::nfa_bt_run(string str)
+{
+	uint32_t state;
+	vector<uint32_t> tmp_bt_log;
+	nfa_reset();
+	while(str.size()){
+		
+		if(find(this->delimiters.begin(), this->delimiters.end(), str[0]) != this->delimiters.end()){
+			str.erase(str.begin(), str.begin()+1);
+			continue;
+		}
+
+		auto del_pos = find_first_of(str.begin(), str.end(), this->delimiters.begin(), this->delimiters.end());
+		string token(str.begin(), del_pos);
+		if(del_pos == str.end())
+ 			str.erase(str.begin(), del_pos);
+ 		else
+			str.erase(str.begin(), del_pos+1);
+
+		while(token.size()){
+			for (int i = 0; i < token.size(); i++){
+				nfa_next(token[i]);
+				sort(this->cur_state_list.begin(), this->cur_state_list.end());
+				state = nfa_status();
+				if(state){
+					nfa_bt_log_save(state, i);
+				} else if(!this->cur_state_list.size()){ //check if our autometon is still allive if still allive - continue
+					break;
+				}
+			}
+
+			if(!this->bt_log.size()){			//if dead - check if in backlog there was etlist one accepting state
+
+				cout << "string is incorrect" << endl;	//if previously no accepted states was entered - lexical analysis failed
+				return -1;
+			}
+			tmp_bt_log = bt_log.back();					//if was - we pring latest accepted analysis, and remove regarding string from nput
+			bt_log.clear();
+			cout << "(" << string(token.begin(),token.begin()+tmp_bt_log[1]+1) << ", " << this->states[tmp_bt_log[0]].analyse << ") ";
+			token.erase(0, tmp_bt_log[1]+1);
+			nfa_reset();
+
+		}
+
+	}
+
+
+}
 void nfa::nfa_next(char symb)
 {
 	vector<uint32_t> new_cur_state_list;
@@ -193,13 +254,15 @@ void nfa::nfa_next(char symb)
 
 opcode nfa::nfa_reset()
 {
-	init_cur_state_list();	
+	init_cur_state_list();
+	bt_log.clear();
 	return STATUS_OK;
 }
 
-opcode nfa::set_accepting(uint32_t state)
+opcode nfa::set_accepting(uint32_t state, string str)
 {
 	this->states[state].is_accepting = true;
+	this->states[state].analyse		 = str;
 	return STATUS_OK;
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <cerrno>
+#include <string>
 
 typedef struct trans_table_s trans_table_t;
 
@@ -19,6 +20,7 @@ class state_c
 {
 public:
 	uint8_t is_accepting;
+	std::string analyse;
 	trans_table_t* transition_table[256];
 
 	opcode_e transition_table_add_new_entry(uint8_t, state_c*, int);
