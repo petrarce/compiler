@@ -6,11 +6,47 @@
 enum {
 	a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t
 };
+
 #define a_z "qwertyuiopasdfghjklzxcvbnm_"
 #define A_Z "QWERTYUIOPASDFGHJKLZXCVBNM"
 #define NUM "0123456789"
 #define DELIM "\n\t "
 #define SPEC "[]{}()=+-*^'%,.:"
+
+enum SATOKENS
+{
+	COMMENT = 0,
+	ID,
+	DELIMITER,
+	TYPE,
+	KEYWORD,
+	SPECIAL,
+	OPERATOR,
+	LITERAL
+};
+
+vector<uint8_t> sa_tokens = {
+	COMMENT,
+	ID,
+	DELIMITER,
+	TYPE,
+	KEYWORD,
+	SPECIAL,
+	OPERATOR,
+	LITERAL
+};
+vector<string> la_str = {	
+	"COMMENT",
+	"ID",
+	"DELIMITER",
+	"TYPE",
+	"KEYWORD",
+	"SPECIAL",
+	"OPERATOR",
+	"LITERAL"
+};
+
+
 
 int main(int argc, char** argv)
 {
@@ -18,6 +54,9 @@ int main(int argc, char** argv)
 	int res;
 	char* alph = a_z A_Z NUM DELIM ;
 	const string strX = "abcd";
+	if(argc != 2)
+		return -1;
+	string inp_str(argv[1]);
 	string comment_atomaton = "0@@1\\0@@8\\0@@11\\0@@17\\0@@22\\0@@26\\0@@31\\0@@33\\0@@35\\0@@37\\0@@39\\0@@41\\"
 								"0@@43\\0@@48\\0@@51\\0@@54\\0@@57\\0@@60\\0@@62\\0@@64\\0@@67\\0@@69\\0@@73\\"
 							/*comments multistring*/
@@ -52,24 +91,24 @@ int main(int argc, char** argv)
 							/*literals*/
 							  "69@"NUM"@70\\70@"NUM"@70\\70@.@71\\71@"NUM"@72\\72@"NUM"@72\\"
 							  "73@\"@74\\74@"a_z A_Z " \t" NUM SPEC"@75\\75@"a_z A_Z " \t" NUM SPEC"@75\\75@\"@76\\" ;
-	if(argc != 2)
-		return -1;
-	string inp_str(argv[1]);
+
+
 	nfa new_nfa(77, alph);
 	new_nfa.link_state(comment_atomaton);
-	new_nfa.set_accepting({7,66}, "COMMENT");
-	new_nfa.set_accepting(63, "ID");
-	new_nfa.set_accepting(68, "DELIM");
-	new_nfa.set_accepting({25,30}, "TYPE");
-	new_nfa.set_accepting({10,16,21}, "KEYWORD");
-	new_nfa.set_accepting({32,34,36,38,40,42}, "SPECIAL");
-	new_nfa.set_accepting({47,50,53,56,59,61}, "OPERATOR");
-	new_nfa.set_accepting({70, 71, 72, 76}, "LITERAL");
+	new_nfa.set_accepting({7,66}, COMMENT);
+	new_nfa.set_accepting(63, ID);
+	new_nfa.set_accepting(68, DELIMITER);
+	new_nfa.set_accepting({25,30}, TYPE);
+	new_nfa.set_accepting({10,16,21}, KEYWORD);
+	new_nfa.set_accepting({32,34,36,38,40,42}, SPECIAL);
+	new_nfa.set_accepting({47,50,53,56,59,61}, OPERATOR);
+	new_nfa.set_accepting({70, 71, 72, 76}, LITERAL);
 
 
 	try{
 		uint8_t st;
-		new_nfa.nfa_bt_run(inp_str);
+		new_nfa.nfa_bt_run(inp_str, la_str, {DELIMITER});
+
 	}
 	catch(exception& e){
 		cout << "EXITING DUE TO PREVIOUS EXCEPTIONS" << endl;

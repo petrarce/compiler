@@ -10,6 +10,11 @@
 
 using namespace std;
 
+typedef struct {
+	string str;
+	uint32_t analyse;
+} analyse_map_s;
+
 class nfa
 {
 private:
@@ -25,21 +30,21 @@ private:
 	opcode deinit_cur_state_list();
 
 
-	void nfa_clause();
+	opcode nfa_clause();
 	vector<uint32_t>  transition_get_next_states(uint32_t , uint8_t );
-	void nfa_bt_log_save(uint32_t state,uint32_t position);
+	opcode nfa_bt_log_save(uint32_t state,uint32_t position);
 public:
 	opcode link_state(uint32_t , char , uint32_t );
 	opcode link_state(uint32_t , string& , uint32_t );
 	opcode link_state(string&);
 
-	opcode set_accepting(uint32_t, string);
-	opcode set_accepting(vector<uint32_t> , string);
+	opcode set_accepting(uint32_t, uint32_t);
+	opcode set_accepting(vector<uint32_t> , uint32_t);
 
 	void nfa_next(char);
-	void nfa_run(string&);
-	opcode nfa_bt_next(string&);
-	opcode nfa_bt_run(string&);
+	opcode nfa_run(string&);
+	analyse_map_s* nfa_bt_next(string&);
+	opcode nfa_bt_run(string&, vector<string>&, vector<uint32_t>);
 	uint32_t nfa_status();
 	opcode nfa_reset();
 

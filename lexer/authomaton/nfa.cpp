@@ -3,6 +3,12 @@
 #include <cstring>
 #include <algorithm>
 
+#ifdef DEBUG
+#include <assert>
+#else
+#define assert(exp) 
+#endif
+
 class inv_arg_ex inv_arg_ex_obj;
 class empty_str_ex empty_str_ex_obj;
 
@@ -134,7 +140,7 @@ opcode nfa::link_state(string& str)
 }
 
 
-void nfa::nfa_run(string& str)
+opcode nfa::nfa_run(string& str)
 {
 	int32_t res = 0;
 	opcode status;
@@ -150,7 +156,7 @@ void nfa::nfa_run(string& str)
 		e.print_ex("currently string is empty");
 		throw exception();
 	}
-
+	return STATUS_OK;
 }
 
 uint32_t nfa::nfa_status()
@@ -163,7 +169,7 @@ uint32_t nfa::nfa_status()
 
 }
 
-void nfa::nfa_clause()
+opcode nfa::nfa_clause()
 {
 	vector<uint32_t> tmp_state_list;
 	vector<uint32_t> tmp_states_eps;
@@ -175,21 +181,22 @@ void nfa::nfa_clause()
 			my_set_union(tmp_state_list, tmp_states_eps);
 		}
 	}while(this->cur_state_list != tmp_state_list);
-
+	return STATUS_OK;
 }
 
-void nfa::nfa_bt_log_save(uint32_t state,uint32_t position)
+opcode nfa::nfa_bt_log_save(uint32_t state,uint32_t position)
 {
 	vector<uint32_t> entry;
 	entry.push_back(state);
 	entry.push_back(position);
 	this->bt_log.push_back(entry);
+	return STATUS_OK;
 }
 
-opcode nfa::nfa_bt_next(string& token)
+analyse_map_s* nfa::nfa_bt_next(string& token)
 {
 	uint32_t state;
-	vector<uint32_t> tmp_bt_log;
+	analyse_map_s* analyse_map = new analyse_map_s();
 
 	nfa_reset();
 	for (int i = 0; i < token.size(); i++){
@@ -206,30 +213,42 @@ opcode nfa::nfa_bt_next(string& token)
 	if(!this->bt_log.size()){			//if dead - check if in backlog there was etlist one accepting state
 
 		cout << "string is incorrect" << endl;	//if previously no accepted states was entered - lexical analysis failed
-		return STATUS_NOK;
+		delete analyse_map;
+		return NULL;
 	}
-	tmp_bt_log = bt_log.back();					//if was - we pring latest accepted analysis, and remove regarding string from nput
+	//if was - we pring latest accepted analysis, and remove regarding string from nput
+	analyse_map->str = token.substr(0, bt_log.back()[1]+1);
+	analyse_map->analyse = this->states[bt_log.back()[0]].analyse;
+	token.erase(0, bt_log.back()[1]+1);
 	bt_log.clear();
-	if(this->states[tmp_bt_log[0]].analyse!= "DELIM")
-		cout 	<< "(\"" 
-				<< string(token.begin(),token.begin()+tmp_bt_log[1]+1) 
-				<< "\", " 
-				<< this->states[tmp_bt_log[0]].analyse << ") " 
-				<< endl;
-	token.erase(0, tmp_bt_log[1]+1);
-	return STATUS_OK;
+	return analyse_map;
 
 }
-opcode nfa::nfa_bt_run(string& token)
+opcode nfa::nfa_bt_run(string& token, vector<string>& strs, vector<uint32_t> ignore)
 {
 	opcode state;
+	analyse_map_s* analyse_map;
 	while(token.size()){
-		state = nfa_bt_next(token);
-		if(state == STATUS_NOK)
+		analyse_map = nfa_bt_next(token);
+		if(!analyse_map)
 			return STATUS_NOK;
+		assert(analyse_map->analyse <= strs.size());
+		if(find(ignore.begin(), ignore.end(), analyse_map->analyse) == ignore.end()) //2 = delimiter - remove this from here
+			cout << "(\"" <<  analyse_map->str << "\", " << strs[analyse_map->analyse] << ") " <<  endl;
+		
+		delete analyse_map;
 	}
 	return STATUS_OK;
 }
+
+
+opcode nfa::nfa_reset()
+{
+	init_cur_state_list();
+	bt_log.clear();
+	return STATUS_OK;
+}
+
 void nfa::nfa_next(char symb)
 {
 	vector<uint32_t> new_cur_state_list;
@@ -243,24 +262,18 @@ void nfa::nfa_next(char symb)
 	this->cur_state_list = new_cur_state_list;
 }
 
-opcode nfa::nfa_reset()
-{
-	init_cur_state_list();
-	bt_log.clear();
-	return STATUS_OK;
-}
-opcode nfa::set_accepting(vector<uint32_t> states, string str)
+opcode nfa::set_accepting(vector<uint32_t> states, uint32_t analyse)
 {
 	for(uint32_t st : states){
 		this->states[st].is_accepting 	= true;
-		this->states[st].analyse		= str;
+		this->states[st].analyse		= analyse;
 	}
 }
 
-opcode nfa::set_accepting(uint32_t state, string str)
+opcode nfa::set_accepting(uint32_t state, uint32_t analyse)
 {
 	this->states[state].is_accepting = true;
-	this->states[state].analyse		 = str;
+	this->states[state].analyse		 = analyse;
 	return STATUS_OK;
 }
 
