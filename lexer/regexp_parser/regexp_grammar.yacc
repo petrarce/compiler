@@ -10,17 +10,24 @@
 S 	: Exp								{printf("S=>Exp;\n");};
 
 Exp	: 		'(' Exp ')'					{printf("Exp=>(Exp);\n");}
-		| 	Exp '*' Exp 				{printf("Exp=>Exp*Exp;\n");}
+		|	'('Exp')''*' Exp 			{printf("Exp=>(Exp)*Exp;\n");}
+		|	'('Exp')''*'				{printf("Exp=>(Exp)*;\n");}
 		|	Exp '+' Exp 				{printf("Exp=>Exp+Exp;\n");}
 		|	Exp '&' Exp 				{printf("Exp=>Exp&Exp;\n");}
 		|	Exp '-' Exp 				{printf("Exp=>Exp-Exp;\n");}
-		| 	Exp '*'						{printf("Exp=>Exp*;\n");}
-		| 	_Exp 						{printf("Exp=>_Exp;\n");};
+		| 	_Exp
 
-_Exp:		_Exp Set 					{printf("_Exp=>_Exp Set;\n");}
-		|	_Exp Symb					{printf("_Exp=>_Exp Symb;\n");}
-		|	Symb						{printf("_Exp=>Symb;\n");}
-		|	Set 						{printf("_Exp=>Set;\n");};				
+_Exp:		_Exp _Term					{printf("_Exp=>_Exp _Term;\n");}
+		|	_Exp _Clause				{printf("_Exp=>_Exp _Clause;\n");}
+		|	_Clause						{printf("_Exp=>_Clause;\n");}
+		|	_Term						{printf("_Exp=>_Term;\n");};
+
+_Clause:	_Term'*'					{printf("_Clause=>_Term*;\n");};
+
+_Term:		Set 						{printf("_Term=>Set;\n");}
+		| 	Symb						{printf("_Term=>Symb;\n");};;
+
+
 
 Set	:		'{' Set_i '}'				{printf("Set=>{Set_i};\n");};
 

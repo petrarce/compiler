@@ -4,6 +4,7 @@ include Makefile.config
 export TOPDIR = $(shell realpath .)
 export BUILD_DIR := $(TOPDIR)/build
 export CXXFLAGS += -I$(TOPDIR)/include -g --std=c++17 -fsanitize=address
+export CFLAGS += -I$(TOPDIR)/include -g -fsanitize=address
 
 SUBDIRS = lexer
 
