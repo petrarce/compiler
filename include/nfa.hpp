@@ -39,7 +39,7 @@ public:
 	opcode set_accepting(uint32_t, uint32_t);
 	opcode set_accepting(vector<uint32_t> , uint32_t);
 
-	opcode nfa_convert_clause(nfa& );
+	static nfa nfa_convert_clausure(nfa& );
 
 	void nfa_next(char);
 	opcode nfa_run(string&);

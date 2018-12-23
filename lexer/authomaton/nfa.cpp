@@ -38,20 +38,41 @@ static void my_set_union(vector<uint32_t>& dest, vector<uint32_t>& src)
 }
 
 
-opcode 	nfa::nfa_convert_clause(nfa& nfa_a)
+nfa 	nfa::nfa_convert_clausure(nfa& nfa_a)
 {
 	nfa temp_nfa = nfa_a;
 
 	// add two new states: intermediate and new_final
-	state_c* intermadiate = new state_c();
-	// get list of all accepting states
-	// link all accepting with intermediate with eps transitions
-	// link first state with intermediate with eps transition
-	// link intermediate state and new_finale with eps transition
-	// reset all accepting states
-	// set new_final as accepting
+	state_c intermadiate, new_final;
+	intermadiate.id = temp_nfa.states.size();
+	new_final.id 	= intermadiate.id + 1;
+	temp_nfa.states.push_back(intermadiate);
+	temp_nfa.states.push_back(new_final);
 
-	return STATUS_OK;
+	// get list of all accepting states
+	vector<uint32_t> acc_st_list;
+	for(uint32_t i = 0; i < temp_nfa.states.size(); i++){
+		if(temp_nfa.states[i].is_accepting){
+			acc_st_list.push_back(temp_nfa.states[i].id);
+		}
+	}
+
+	// link creates states
+	for(uint32_t st_id : acc_st_list){
+		temp_nfa.link_state(st_id, EPS, intermadiate.id);
+	}
+	temp_nfa.link_state(0, EPS, new_final.id);
+	temp_nfa.link_state(intermadiate.id, EPS, new_final.id);
+	temp_nfa.link_state(intermadiate.id, EPS, 0);
+
+	
+	// reset all accepting states
+	for(uint32_t st_id : acc_st_list){
+		temp_nfa.states[st_id].is_accepting = false;
+	}
+	temp_nfa.states[new_final.id].is_accepting = true;
+
+	return temp_nfa;
 }
 
 opcode nfa::init_cur_state_list()
@@ -68,27 +89,8 @@ opcode nfa::deinit_cur_state_list()
 
 vector<uint32_t> nfa::transition_get_next_states(uint32_t state, uint8_t symb)
 {
-	vector<uint32_t> 	states_id;
 
-	if(!this->states[state].transition_table[symb])
-		return states_id;
-
-	vector<uint32_t> 	states = this->states[state].transition_table[symb]->state_ids;
-	//auto 		state_count = this->states[state].transition_table[symb]->state_count;
-
-	//in transition table can be empty at this point (means, that any further transition leads to dead state)
-	if(!this->states[state].transition_table[symb])
-		return states_id;
-
-	for(uint32_t  i = 0; i < this->states.size(); i++){
-		for(uint32_t j : states){
-			if(j == this->states[i].id){
-				states_id.push_back(i);
-			}
-		}
-	}
-
-	return states_id;
+	return this->states[state].transition_table[symb].state_ids;
 }
 
 opcode nfa::link_state(uint32_t state1, char symb, uint32_t state2)
@@ -177,11 +179,12 @@ opcode nfa::nfa_run(string& str)
 
 uint32_t nfa::nfa_status()
 {
+
 	for(uint32_t state : this->cur_state_list){
 		if (this->states[state].is_accepting)
 			return state;
 	}
-	return 0;
+	return -1;
 
 }
 
@@ -211,15 +214,16 @@ opcode nfa::nfa_bt_log_save(uint32_t state,uint32_t position)
 
 analyse_map_s* nfa::nfa_bt_next(string& token)
 {
-	uint32_t state;
+	int state;
 	analyse_map_s* analyse_map = new analyse_map_s();
 
 	nfa_reset();
+	nfa_clause();
 	for (int i = 0; i < token.size(); i++){
 		nfa_next(token[i]);
 		sort(this->cur_state_list.begin(), this->cur_state_list.end());
 		state = nfa_status();
-		if(state){
+		if(state != -1){
 			nfa_bt_log_save(state, i);
 		} else if(!this->cur_state_list.size()){ //check if our autometon is still allive if still allive - continue
 			break;
@@ -269,13 +273,14 @@ void nfa::nfa_next(char symb)
 {
 	vector<uint32_t> new_cur_state_list;
 	
-	nfa_clause();
 	for (uint32_t state : this->cur_state_list){
 		vector<uint32_t> tmp_states = transition_get_next_states(state, symb);
 
 		my_set_union(new_cur_state_list, tmp_states);
 	}
 	this->cur_state_list = new_cur_state_list;
+	nfa_clause();
+
 }
 
 opcode nfa::set_accepting(vector<uint32_t> states, uint32_t analyse)
