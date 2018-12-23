@@ -4,44 +4,36 @@
 
 using namespace std;
 
-opcode_e 		state_c::transition_table_add_new_entry(uint8_t symb, state_c *states, int state_count)
+opcode_e 		state_c::transition_table_add_new_entry(uint8_t symb, vector<uint32_t> states)
 {
 	if(this->transition_table[symb])
 		return STATUS_ALREADY_EXISTS;
-	if(!states)
+	if(!states.size())
 		return STATUS_INVALID_ARG;
-	this->transition_table[symb] = new trans_table_t;
-	this->transition_table[symb]->symb = symb;
-	this->transition_table[symb]->state_count = state_count;
-	this->transition_table[symb]->states = (state_c**)malloc( sizeof(state_c*) * state_count);
-	for(int i = 0; i < state_count; i++)
-		this->transition_table[symb]->states[i] = states + i;
+
+	this->transition_table[symb] 				= new trans_table_t;
+	this->transition_table[symb]->symb 			= symb;
+	this->transition_table[symb]->state_ids 	= states;
 
 	return STATUS_OK;
 
 }
-opcode_e 		state_c::transition_table_append_entry(uint8_t symb, state_c &state)
+opcode_e 		state_c::transition_table_append_entry(uint8_t symb, uint32_t state)
 {
 	state_c **ptr;
+	vector<uint32_t> vec; vec.push_back(state);
 
 	if(!this->transition_table[symb])
-		return transition_table_add_new_entry(symb, &state, 1);
+		return transition_table_add_new_entry(symb, vec);
 
-	ptr = (state_c**)malloc(sizeof(state_c*) * (this->transition_table[symb]->state_count + 1));
-	if(!ptr)
-		return STATUS_ALLOC_FAILED;
-	memcpy(ptr, this->transition_table[symb]->states, this->transition_table[symb]->state_count*(sizeof(state_c*)));
-	free(this->transition_table[symb]->states);
-	this->transition_table[symb]->states = ptr;
-	this->transition_table[symb]->states[this->transition_table[symb]->state_count] = &state;
-	this->transition_table[symb]->state_count++;
+	this->transition_table[symb]->state_ids.push_back(state);
 
 	return STATUS_OK;
 }
 
-opcode_e 		state_c::transition_table_add_entry(uint8_t symb, state_c &state)
+opcode_e 		state_c::transition_table_add_entry(uint8_t symb, uint32_t state_id)
 {
-	return transition_table_append_entry(symb, state);
+	return transition_table_append_entry(symb, state_id);
 }
 
 trans_table_s* 	state_c::transition_table_do_transition(uint8_t symb, state_c &state)
@@ -64,7 +56,7 @@ state_c::~state_c()
 	for(int i = 0; i < 256; i++){
 		if(!this->transition_table[i])
 			continue;
-		free(this->transition_table[i]->states);
+		this->transition_table[i]->state_ids.clear();
 		delete this->transition_table[i];
 	}
 }

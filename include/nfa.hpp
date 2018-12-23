@@ -19,11 +19,9 @@ class nfa
 {
 private:
 	char alphabet[256];
-	uint32_t states_count;
-	state_c* states;
-	vector<uint32_t> cur_state_list;
+	vector<state_c> states; 			//states of the automaton
+	vector<uint32_t> cur_state_list;	//states, which are currently active in automaton
 	vector<vector<uint32_t>> bt_log;
-	string delimiters;
 private:
 
 	opcode init_cur_state_list();
@@ -40,6 +38,8 @@ public:
 
 	opcode set_accepting(uint32_t, uint32_t);
 	opcode set_accepting(vector<uint32_t> , uint32_t);
+
+	opcode nfa_convert_clause(nfa& );
 
 	void nfa_next(char);
 	opcode nfa_run(string&);

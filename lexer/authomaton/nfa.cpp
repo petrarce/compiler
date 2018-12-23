@@ -38,6 +38,22 @@ static void my_set_union(vector<uint32_t>& dest, vector<uint32_t>& src)
 }
 
 
+opcode 	nfa::nfa_convert_clause(nfa& nfa_a)
+{
+	nfa temp_nfa = nfa_a;
+
+	// add two new states: intermediate and new_final
+	state_c* intermadiate = new state_c();
+	// get list of all accepting states
+	// link all accepting with intermediate with eps transitions
+	// link first state with intermediate with eps transition
+	// link intermediate state and new_finale with eps transition
+	// reset all accepting states
+	// set new_final as accepting
+
+	return STATUS_OK;
+}
+
 opcode nfa::init_cur_state_list()
 {
 	this->cur_state_list.clear();
@@ -57,16 +73,16 @@ vector<uint32_t> nfa::transition_get_next_states(uint32_t state, uint8_t symb)
 	if(!this->states[state].transition_table[symb])
 		return states_id;
 
-	state_c** 	states = this->states[state].transition_table[symb]->states;
-	auto 		state_count = this->states[state].transition_table[symb]->state_count;
+	vector<uint32_t> 	states = this->states[state].transition_table[symb]->state_ids;
+	//auto 		state_count = this->states[state].transition_table[symb]->state_count;
 
 	//in transition table can be empty at this point (means, that any further transition leads to dead state)
 	if(!this->states[state].transition_table[symb])
 		return states_id;
 
-	for(uint32_t  i = 0; i < this->states_count; i++){
-		for(uint32_t j = 0; j < state_count; j++){
-			if(states[j] == this->states + i){
+	for(uint32_t  i = 0; i < this->states.size(); i++){
+		for(uint32_t j : states){
+			if(j == this->states[i].id){
 				states_id.push_back(i);
 			}
 		}
@@ -78,7 +94,7 @@ vector<uint32_t> nfa::transition_get_next_states(uint32_t state, uint8_t symb)
 opcode nfa::link_state(uint32_t state1, char symb, uint32_t state2)
 {
 	opcode status;
-	status = states[state1].transition_table_add_entry(symb, states[state2]);
+	status = states[state1].transition_table_add_entry(symb, state2);
 	return status;
 }
 
@@ -282,14 +298,19 @@ nfa::nfa(uint32_t states_count, char* alphabet)
 	memset(this->alphabet, 0, sizeof(this->alphabet));
 	for(int i = 0; i < strlen(alphabet); i++)
 		this->alphabet[alphabet[i]] = alphabet[i];
-	this->states = new state_c[states_count];
-	this->states_count = states_count;
+	
+	//initialise states
+	this->states.resize(states_count);
+		for(int i = 0; i < this->states.size(); i++){//enumerate state ids
+		this->states[i].id = i;
+	}
+
 	init_cur_state_list();
 }
 
 nfa::~nfa(){
 
-	delete[] this->states;
+	this->states.clear();
 	memset(this->alphabet, 0, sizeof(this->alphabet));
 	deinit_cur_state_list();
 }
