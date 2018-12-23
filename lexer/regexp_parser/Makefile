@@ -28,7 +28,7 @@ $(yacc):
 build: $(yacc-obj) $(objects)
 	echo =======build
 ifeq ($(CONFIG_TEST),y)
-	$(CXX) $(CXXFLAGS) -o test_main $(objects) $(yacc-obj)
+	$(CXX) $(CXXFLAGS) -o test_main $(shell find -name "*.o")
 else
 	$(AR) rcs $(target) $(objects)
 endif 
