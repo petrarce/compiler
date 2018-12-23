@@ -1,7 +1,8 @@
 #set CONFIG_TEST=y to build test application for the sources
-objects = $(subst 	c,o,$(shell find *.c))
-yacc	= $(wildcard *.yacc)
-yacc-obj = $(patsubst %.yacc,%.tab.o,$(yacc))
+src 	:= $(wildcard *.cpp)
+objects := $(patsubst %.cpp,%.o,$(src))
+yacc	:= $(wildcard *.ypp)
+yacc-obj := $(patsubst %.ypp,%.tab.o,$(yacc))
 ifeq ($(CONFIG_TEST),y)
 	target = test_main
 else
@@ -18,16 +19,16 @@ all: build install
 
 $(yacc-obj): $(yacc)
 	echo =======$@
-	$(CC) $(CFLAGS) -c $(patsubst %.o,%.c,$@) -o $@
+	$(CXX) $(CFLAGS) -c $(patsubst %.o,%.cpp,$@) -o $@
 
 $(yacc):
 	echo =======$@
-	yacc -v -b $(patsubst %.yacc,%,$@) $@
+	bison $@
 
 build: $(yacc-obj) $(objects)
 	echo =======build
 ifeq ($(CONFIG_TEST),y)
-	$(CC) $(CFLAGS) -o test_main $(objects)
+	$(CXX) $(CXXFLAGS) -o test_main $(objects) $(yacc-obj)
 else
 	$(AR) rcs $(target) $(objects)
 endif 

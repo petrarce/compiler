@@ -1,4 +1,7 @@
 #pragma once
+#include <iostream>
+
+using namespace std;
 
 typedef struct {
 	char* inp_buf;
@@ -8,4 +11,4 @@ typedef struct {
 extern lex_str_t lex_str;
 
 int yylex();
-int yyerror();
+int yyerror(string str);

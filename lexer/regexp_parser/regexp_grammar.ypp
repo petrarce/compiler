@@ -1,0 +1,49 @@
+/*declarations*/
+%start	S
+%left '-'
+%left '&'
+%left '|'
+%left '*'
+%{
+#include <iostream>
+#include "lexer.hpp"
+
+#define YYSTYPE string
+
+using namespace std;	
+%}
+%%
+/*rules*/
+S 	: Exp								{printf("S=>Exp;\n"); cout << "final string: " << $1 << endl;};
+
+Exp	: 		'(' Exp ')'					{ $$ = "(" + $2 + ")"; printf("Exp=>(Exp);\n");}
+		|	Exp '|' Exp 				{ $$ = $1 + "|" + $3; printf("Exp=>Exp|Exp;\n");}
+		|	Exp '&' Exp 				{ $$ = $1 + "&" + $3; printf("Exp=>Exp&Exp;\n");}
+		|	Exp '-' Exp 				{ $$ = $1 + "-" + $3; printf("Exp=>Exp-Exp;\n");}
+		| 	_Exp						{ $$ = $1; printf("Exp=>_Exp;\n");};
+
+_Exp:		_Exp _Term					{ $$ = $1 + $2; printf("_Exp=>_Exp _Term;\n");}
+		|	_Exp _Clause				{ $$ = $1 + $2; printf("_Exp=>_Exp _Clause;\n");}
+		|	_Clause						{ $$ = $1; printf("_Exp=>_Clause;\n");}
+		|	_Term						{ $$ = $1; printf("_Exp=>_Term;\n");};
+
+_Clause:	_Term'*'					{ $$ = $1 + '*'; printf("_Clause=>_Term*;\n");}
+		| 	'('Exp')''*'				{ $$ = "(" + $2 + ")*"; printf("_Clause=>(Exp)*;\n");};
+
+_Term:		Set 						{ $$ = $1; printf("_Term=>Set;\n");}
+		| 	Symb						{ $$ = $1; printf("_Term=>Symb;\n");};;
+
+
+
+Set	:		'{' Set_i '}'				{ $$ = $2; printf("Set=>{Set_i};\n");};
+
+Set_i: 		Symb ',' Set_i				{ $$ = $1 + ',' + $3; printf("Set_i=>Symb , Set_i;\n");};
+		| 	Symb						{ $$ = $1; printf("Set_i=>Symb;\n");};
+
+Symb: 		'a'							{ string str = "a"; $$ = str; printf("Symb=>a\n");}
+		| 	'b'							{ string str = "b"; $$ = str; printf("Symb=>b\n");}
+		|	'0'							{ string str = "eps"; $$ = str; printf("Symb=>eps\n");};
+
+
+%%
+/*programs*/

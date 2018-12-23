@@ -1,6 +1,8 @@
-#include "lexer.h"
-#include <stdio.h>
+#include "lexer.hpp"
+#include <iostream>
 #include <assert.h>
+
+using namespace std;
 
 int yylex()
 {
@@ -8,9 +10,9 @@ int yylex()
 	return lex_str.inp_buf[lex_str.cur_pos - 1];	
 }
 
-int yyerror()
+int yyerror(string str)
 {
-	printf("yyerror: some error occured!!!\n");
+	cout << "ERROR: " << str << "\n" << endl;
 	return 0;
 }
 /*

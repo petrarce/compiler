@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "lexer.h"
-#include "y.tab.h"
+#include "lexer.hpp"
+#include <regexp_grammar.tab.hpp>
 
 lex_str_t lex_str;
 
