@@ -18,7 +18,6 @@ typedef struct {
 class nfa
 {
 private:
-	char alphabet[256];
 	vector<state_c> states; 			//states of the automaton
 	vector<uint32_t> cur_state_list;	//states, which are currently active in automaton
 	vector<vector<uint32_t>> bt_log;

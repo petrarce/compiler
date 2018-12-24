@@ -378,11 +378,7 @@ opcode nfa::set_accepting(uint32_t state, uint32_t analyse)
 }
 
 nfa::nfa(uint32_t states_count, char* alphabet)
-{
-	memset(this->alphabet, 0, sizeof(this->alphabet));
-	for(int i = 0; i < strlen(alphabet); i++)
-		this->alphabet[alphabet[i]] = alphabet[i];
-	
+{	
 	//initialise states
 	this->states.resize(states_count);
 		for(int i = 0; i < this->states.size(); i++){//enumerate state ids
@@ -395,6 +391,5 @@ nfa::nfa(uint32_t states_count, char* alphabet)
 nfa::~nfa(){
 
 	this->states.clear();
-	memset(this->alphabet, 0, sizeof(this->alphabet));
 	deinit_cur_state_list();
 }
