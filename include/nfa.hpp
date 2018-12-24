@@ -40,6 +40,8 @@ public:
 	opcode set_accepting(vector<uint32_t> , uint32_t);
 
 	static nfa nfa_convert_clausure(nfa& );
+	static nfa nfa_convert_concat(nfa&, nfa&);
+	static nfa nfa_convert_union(nfa&, nfa&){};
 
 	void nfa_next(char);
 	opcode nfa_run(string&);

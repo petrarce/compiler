@@ -75,6 +75,48 @@ nfa 	nfa::nfa_convert_clausure(nfa& nfa_a)
 	return temp_nfa;
 }
 
+nfa 	nfa::nfa_convert_concat(nfa& nfa_a, nfa& nfa_b)
+{
+	nfa temp_nfa = nfa_a;
+
+	//create intermediate state
+	state_c intermediate;
+	intermediate.id = nfa_a.states.size();	
+	//add intermediate to nfa_a
+	temp_nfa.states.push_back(intermediate);
+	//get list of all accepting states in nfa_a
+	//link all accepting of nfa_a to intermediate
+	//reset all accepting states of nfa_a
+	for(state_c st : temp_nfa.states){
+		if(st.is_accepting){
+			temp_nfa.link_state(st.id, EPS, intermediate.id);
+			temp_nfa.states[st.id].is_accepting = false;
+		}
+	}
+	//for all states in nfa_b do:
+	uint32_t offset = temp_nfa.states.size();
+	for(state_c st : nfa_b.states){
+		//increase id of state		
+		st.id += offset;
+		//increase state_ids in transition table
+		for(int i = 0; i < st.transition_table.size(); i++){
+			if(st.transition_table[i].symb == 0)
+				continue;
+			for(int j = 0; j <  st.transition_table[i].state_ids.size(); j++){
+				st.transition_table[i].state_ids[j] += offset;
+			}
+		}
+		//add state to nfa_a
+		temp_nfa.states.push_back(st);
+	}
+	//link intermediate state with first state of nfa_b
+	temp_nfa.link_state(intermediate.id, EPS, offset);
+	//return nfa_a
+	return temp_nfa;
+	//append alphabet from nfa_b to nfa_a
+
+}
+
 opcode nfa::init_cur_state_list()
 {
 	this->cur_state_list.clear();
