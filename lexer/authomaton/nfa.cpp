@@ -37,6 +37,25 @@ static void my_set_union(vector<uint32_t>& dest, vector<uint32_t>& src)
 	return;
 }
 
+void push_states_with_offset(nfa& temp_nfa, nfa& nfa_x)
+{
+	uint32_t offset = temp_nfa.states.size();
+	for(state_c st : nfa_x.states){
+		//add offset to state id
+		st.id += offset;
+		//add offset to state_ids in transition table
+		for(int i = 0; i < st.transition_table.size(); i++){
+			for(int j = 0; j < st.transition_table[i].state_ids.size(); j++){
+				st.transition_table[i].state_ids[j] += offset;
+			}
+		}
+		//put state into temp_nfa
+		temp_nfa.states.push_back(st);
+	}
+
+}
+
+
 
 nfa 	nfa::nfa_convert_clausure(nfa& nfa_a)
 {
@@ -115,6 +134,24 @@ nfa 	nfa::nfa_convert_concat(nfa& nfa_a, nfa& nfa_b)
 	return temp_nfa;
 	//append alphabet from nfa_b to nfa_a
 
+}
+
+
+nfa 	nfa::nfa_convert_union(nfa& nfa_a, nfa& nfa_b)
+{
+	nfa temp_nfa(0, "");
+	//create 0 state
+	state_c zero_state;
+	zero_state.id = 0;
+	temp_nfa.states.push_back(zero_state);
+	//for all states in nfa_a:
+	push_states_with_offset(temp_nfa, nfa_a);
+	temp_nfa.link_state(zero_state.id, EPS, 1);
+
+	push_states_with_offset(temp_nfa, nfa_b);
+	temp_nfa.link_state(zero_state.id, EPS, nfa_a.states.size()+1);
+
+	return temp_nfa;
 }
 
 opcode nfa::init_cur_state_list()

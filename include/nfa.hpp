@@ -31,7 +31,10 @@ private:
 	opcode nfa_clause();
 	vector<uint32_t>  transition_get_next_states(uint32_t , uint8_t );
 	opcode nfa_bt_log_save(uint32_t state,uint32_t position);
+
 public:
+	friend void push_states_with_offset(nfa&, nfa&);
+
 	opcode link_state(uint32_t , char , uint32_t );
 	opcode link_state(uint32_t , string& , uint32_t );
 	opcode link_state(string&);
@@ -41,7 +44,7 @@ public:
 
 	static nfa nfa_convert_clausure(nfa& );
 	static nfa nfa_convert_concat(nfa&, nfa&);
-	static nfa nfa_convert_union(nfa&, nfa&){};
+	static nfa nfa_convert_union(nfa&, nfa&);
 
 	void nfa_next(char);
 	opcode nfa_run(string&);
