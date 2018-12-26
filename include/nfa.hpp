@@ -54,7 +54,8 @@ public:
 
 
 
-	nfa(uint32_t states_count, char* alphabet);
+	nfa(){};
+	nfa(uint32_t states_count);
 	~nfa();
 
 };

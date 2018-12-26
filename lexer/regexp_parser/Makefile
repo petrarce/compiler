@@ -5,6 +5,7 @@ yacc	:= $(wildcard *.ypp)
 yacc-obj := $(patsubst %.ypp,%.tab.o,$(yacc))
 ifeq ($(CONFIG_TEST),y)
 	target = test_main
+	LDFLAGS += -lfinit_automaton
 else
 	target = libfinit_regexparser.a
 	tmpobjects := $(objects)
@@ -28,12 +29,10 @@ $(yacc):
 build: $(yacc-obj) $(objects)
 	echo =======build
 ifeq ($(CONFIG_TEST),y)
-	$(CXX) $(CXXFLAGS) -o test_main $(shell find -name "*.o")
+	$(CXX) $(CXXFLAGS) -o test_main $(shell find -name "*.o") $(LDFLAGS)
 else
 	$(AR) rcs $(target) $(objects)
 endif 
-
-
 
 install:
 	cp $(target) $(BUILD_DIR)

@@ -2,6 +2,7 @@
 #include <nfa.hpp>
 #include <cstdio>
 #include <cstring>
+#include <types.hpp>
 
 enum {
 	a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t
@@ -13,38 +14,6 @@ enum {
 #define DELIM "\n\t "
 #define SPEC "[]{}()=+-*^'%,.:"
 
-enum SATOKENS
-{
-	COMMENT = 0,
-	ID,
-	DELIMITER,
-	TYPE,
-	KEYWORD,
-	SPECIAL,
-	OPERATOR,
-	LITERAL
-};
-
-vector<uint8_t> sa_tokens = {
-	COMMENT,
-	ID,
-	DELIMITER,
-	TYPE,
-	KEYWORD,
-	SPECIAL,
-	OPERATOR,
-	LITERAL
-};
-vector<string> la_str = {	
-	"COMMENT",
-	"ID",
-	"DELIMITER",
-	"TYPE",
-	"KEYWORD",
-	"SPECIAL",
-	"OPERATOR",
-	"LITERAL"
-};
 
 
 
@@ -93,7 +62,7 @@ int main(int argc, char** argv)
 							  "73@\"@74\\74@"a_z A_Z " \t" NUM SPEC"@75\\75@"a_z A_Z " \t" NUM SPEC"@75\\75@\"@76\\" ;
 
 
-	nfa new_nfa(77, alph);
+	nfa new_nfa(77);
 	new_nfa.link_state(comment_atomaton);
 	new_nfa.set_accepting({7,66}, COMMENT);
 	new_nfa.set_accepting(63, ID);

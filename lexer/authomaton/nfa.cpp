@@ -139,7 +139,7 @@ nfa 	nfa::nfa_convert_concat(nfa& nfa_a, nfa& nfa_b)
 
 nfa 	nfa::nfa_convert_union(nfa& nfa_a, nfa& nfa_b)
 {
-	nfa temp_nfa(0, "");
+	nfa temp_nfa(0);
 	//create 0 state
 	state_c zero_state;
 	zero_state.id = 0;
@@ -377,7 +377,7 @@ opcode nfa::set_accepting(uint32_t state, uint32_t analyse)
 	return STATUS_OK;
 }
 
-nfa::nfa(uint32_t states_count, char* alphabet)
+nfa::nfa(uint32_t states_count)
 {	
 	//initialise states
 	this->states.resize(states_count);

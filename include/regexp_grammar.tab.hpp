@@ -30,6 +30,9 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
+#include <nfa.hpp>
+#include <types.hpp>
+
 #ifndef YY_YY_REGEXP_GRAMMAR_TAB_HPP_INCLUDED
 # define YY_YY_REGEXP_GRAMMAR_TAB_HPP_INCLUDED
 /* Debug traces.  */
@@ -43,13 +46,14 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+typedef nfa YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
 
 extern YYSTYPE yylval;
+extern nfa final_nfa;
 
 int yyparse (void);
 
