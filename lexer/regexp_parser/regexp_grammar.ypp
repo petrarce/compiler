@@ -6,8 +6,8 @@
 %left '*'
 %{
 #include <iostream>
-#include <regexp_grammar.tab.hpp>
-#include "lexer.hpp"
+#include "regexp_grammar.tab.hpp"
+#include "regex_lexer.hpp"
 
 using namespace std;
 

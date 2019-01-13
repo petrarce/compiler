@@ -1,10 +1,11 @@
 #pragma once
 #include <iostream>
+#include <string>
 
 using namespace std;
 
 typedef struct {
-	char* inp_buf;
+	string inp_buf;
 	int cur_pos;
 } lex_str_t;
 
