@@ -1,6 +1,7 @@
 #pragma once
 
-#include "state.hpp"
+#include <state.hpp>
+#include <types.hpp>
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
@@ -40,6 +41,8 @@ public:
 
 	opcode set_accepting(uint32_t, uint32_t);
 	opcode set_accepting(vector<uint32_t> , uint32_t);
+
+	opcode set_analyse(enum SATOKENS token);
 
 	static nfa nfa_convert_clausure(nfa& );
 	static nfa nfa_convert_concat(nfa&, nfa&);

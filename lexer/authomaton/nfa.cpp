@@ -377,6 +377,14 @@ opcode nfa::set_accepting(uint32_t state, uint32_t analyse)
 	return STATUS_OK;
 }
 
+opcode nfa::set_analyse(enum SATOKENS token){
+
+	for(int i = 0; i < this->states.size(); i++)		{
+		this->states[i].analyse = token;
+	}
+	return STATUS_OK;
+}
+
 nfa::nfa(uint32_t states_count)
 {	
 	//initialise states

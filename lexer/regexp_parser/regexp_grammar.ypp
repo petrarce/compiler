@@ -1,23 +1,35 @@
 /*declarations*/
+%token ASCII
 %start	S
 %left '-'
 %left '&'
 %left '|'
 %left '*'
+
 %{
+
+
 #include <iostream>
+#include <nfa.hpp>
+#include <types.hpp>
+#include <vector>
+#include "global_objects.hpp"
+
+#define YYSTYPE nfa
 #include "regexp_grammar.tab.hpp"
-#include "regex_lexer.hpp"
+
 
 using namespace std;
 
 nfa final_nfa;
+vector<char> regexp_special_symbs = {'*', '|', '&', '-', '(', ')', '{', '}', ','};
 %}
+
 %%
 /*rules*/
 S 	: Exp								{final_nfa = $1; cout << "S=>Exp " << endl;};
 
-Exp	: 		'(' Exp ')'					{ $$ = $2; printf("Exp=>(Exp);\n");}
+Exp	:
 		|	Exp '|' Exp 				{ $$ = nfa::nfa_convert_union($1 ,$3);
 											printf("Exp=>Exp|Exp;\n");}
 		|	Exp '&' Exp 				{ $$ = nfa::nfa_convert_union($1 ,$3);
@@ -29,15 +41,22 @@ _Exp:		_Exp _Term					{ $$ = nfa::nfa_convert_concat($1 ,$2);
 											printf("_Exp=>_Exp _Term;\n");}
 		|	_Exp _Clause				{ $$ = nfa::nfa_convert_concat($1 ,$2); 
 											printf("_Exp=>_Exp _Clause;\n");}
+		|	_Exp _Exp_bracket			{ $$ = nfa::nfa_convert_concat($1 ,$2); 
+											printf("_Exp=>_Exp _Exp_bracket;\n");}
 		|	_Clause						{ $$ = $1; 
 											printf("_Exp=>_Clause;\n");}
 		|	_Term						{ $$ = $1; 
-											printf("_Exp=>_Term;\n");};
+											printf("_Exp=>_Term;\n");}
+		| 	_Exp_bracket				{ $$ = $1; 
+											printf("_Exp=>_Exp_bracket;\n");};
 
 _Clause:	_Term'*'					{ $$ = nfa::nfa_convert_clausure($1); 
 											printf("_Clause=>_Term*;\n");}
-		| 	'('Exp')''*'				{ $$ =  nfa::nfa_convert_clausure($2); 
-											printf("_Clause=>(Exp)*;\n");};
+		| 	_Exp_bracket'*'				{ $$ =  nfa::nfa_convert_clausure($1); 
+											printf("_Clause=>_Exp_bracket*;\n");};
+
+_Exp_bracket : '('Exp')'				{ $$ =  $2; 
+											printf("_Exp_bracket=>(Exp);\n");};
 
 _Term:		Set 						{ $$ = $1; printf("_Term=>Set;\n");}
 		| 	Symb						{ $$ = $1; printf("_Term=>Symb;\n");};;
@@ -66,7 +85,15 @@ Symb: 		'a'							{ 	nfa new_nfa(2);
 											new_nfa.link_state(link_str); 
 											new_nfa.set_accepting(1, REGEXP);
 											$$ = new_nfa;
-											printf("Symb=>eps\n");};
+											printf("Symb=>eps\n");}
+		|	ASCII						{ 	nfa new_nfa(2); 
+											string link_str = "0@x@1\\";
+											//set symbol received from lexer
+											link_str[2] = lex_str.inp_buf[lex_str.cur_pos-1];
+											new_nfa.link_state(link_str); 
+											new_nfa.set_accepting(1, REGEXP);
+											$$ = new_nfa;
+											printf("Symb=>%c\n", link_str[2]);};
 
 
 %%

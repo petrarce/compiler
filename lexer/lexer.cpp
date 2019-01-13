@@ -6,13 +6,12 @@
 
 using namespace std;
 
-lexer::lexer(vector<string> regex_vec){
+lexer::lexer(vector<string> regex_vec, vector<enum SATOKENS> tokens_vec){
 	nfa tmp_nfa;
-	for(string s : regex_vec){
-		if(regex2nfa(s, tmp_nfa) != 0){
-			printf("invalid regexp was given: %s", s);
-			break;
-		}
+	assert(regex_vec.size() != tokens_vec.size());
+
+	for(int i = 0; i < regex_vec.size(); i++){
+		assert(regex2nfa(regex_vec[i], tokens_vec[i], tmp_nfa) != 0);
 		this->prod_nfa = nfa::nfa_convert_union(this->prod_nfa ,tmp_nfa);
 	}
 }

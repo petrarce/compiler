@@ -24,7 +24,7 @@ $(yacc-obj): $(yacc)
 
 $(yacc):
 	echo =======$@
-	bison $@
+	bison -v -d $@
 
 build: $(yacc-obj) $(objects)
 	echo =======build

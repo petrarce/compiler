@@ -12,7 +12,7 @@ int main(int argc, char** argv)
 
 	printf("parsing string: %s\n", argv[1]);
 
-	if(regex2nfa(regex_str, new_nfa) == 0){
+	if(regex2nfa(regex_str, REGEXP, new_nfa) == 0){
 		printf("regexp parsed sucessfully\n");
 	} else {
 		printf("failed to parse regexp\n");

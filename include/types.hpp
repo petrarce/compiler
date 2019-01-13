@@ -40,3 +40,10 @@ static vector<string> la_str = {
 	"LITERAL",
 	"REGEXP"
 };
+
+#define assert(exp) { \
+	if(exp) { \
+		printf("[%s,%d]assertion failes: %s", __FUNCTION__, __LINE__, #exp); \
+		exit(-1); \
+	} \
+}
