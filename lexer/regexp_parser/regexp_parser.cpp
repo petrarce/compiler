@@ -6,7 +6,7 @@ lex_str_t lex_str;
 //function parses regular expression and builds respective automaton
 //on success - return 0
 //on failure - return -1
-int regex2nfa(string regex, nfa& new_nfa){
+int regex2nfa(string& regex, nfa& new_nfa){
 	lex_str.inp_buf = regex;
 	lex_str.cur_pos = 0;
 

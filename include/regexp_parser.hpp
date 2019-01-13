@@ -1,5 +1,5 @@
 #pragma once
-#include <nfa.hpp>
 #include <string>
+#include <nfa.hpp>
 
-int regex2nfa(string regex, nfa& new_nfa);
+int regex2nfa(string& regex, nfa& new_nfa);

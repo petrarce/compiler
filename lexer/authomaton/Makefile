@@ -5,7 +5,7 @@ objects = $(subst 	cpp,o,$(shell find *.cpp))
 ifeq ($(CONFIG_TEST),y)
 	target = test_main
 else
-	target = libfinit_automaton.a
+	target = libnfa.a
 	tmpobjects := $(objects)
 	objects = $(filter-out test_main.o,$(tmpobjects))
 endif
@@ -16,7 +16,7 @@ build:  $(objects)
 ifeq ($(CONFIG_TEST),y)
 	$(CXX) $(CXXFLAGS) -o test_main $(objects)
 else
-	$(AR) rcs $(target) $(objects)
+	$(AR) rcs $(target) *.o
 endif 
 install:
 	cp $(target) $(BUILD_DIR)

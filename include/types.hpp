@@ -1,4 +1,9 @@
 #pragma once
+#include <vector>
+#include <cstdint>
+#include <string>
+
+using namespace std;
 
 enum SATOKENS
 {
