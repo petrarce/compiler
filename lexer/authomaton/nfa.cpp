@@ -332,9 +332,9 @@ opcode nfa::nfa_bt_run(string& token, vector<string>& strs, vector<uint32_t> ign
 		if(!analyse_map)
 			return STATUS_NOK;
 		assert(analyse_map->analyse <= strs.size());
-		if(find(ignore.begin(), ignore.end(), analyse_map->analyse) == ignore.end()) //2 = delimiter - remove this from here
-			cout << "(\"" <<  analyse_map->str << "\", " << strs[analyse_map->analyse] << ") " <<  endl;
-		
+		if(find(ignore.begin(), ignore.end(), analyse_map->analyse) == ignore.end()){
+			printf("(\"%s\", %s)\n", analyse_map->str.begin(), strs[analyse_map->analyse].begin());
+		}
 		delete analyse_map;
 	}
 	return STATUS_OK;
@@ -387,9 +387,8 @@ opcode nfa::set_analyse(enum SATOKENS token){
 
 nfa::nfa(uint32_t states_count)
 {	
-	//initialise states
 	this->states.resize(states_count);
-		for(int i = 0; i < this->states.size(); i++){//enumerate state ids
+	for(int i = 0; i < this->states.size(); i++){
 		this->states[i].id = i;
 	}
 
