@@ -1,0 +1,54 @@
+/*declarations*/
+%token Int Real Id If Else While Literal Eps
+%start PROG
+%left '-' '+'
+%left '*' '/'
+%left '%'
+%%
+/*rules*/
+PROG: 				STMT
+
+STMT: 	
+					DEF STMT
+				| 	_STMT STMT
+				| 	_STMT
+_STMT:			 	IF
+				|	WHILE
+				|	ASSIGN
+				|	PROCEDURE
+
+DEF:				DEF _DEF
+				|	_DEF
+_DEF: 				TYPE VARLIST';'
+VARLIST:			Id',' VARLIST
+				|	Id '=' EXPR',' VARLIST
+				|	Id
+				|	Id '=' EXPR
+TYPE: 				Int 
+				| 	Real
+
+
+
+
+IF:					If'('EXPR')''{'STMT'}'Else'{'STMT'}'
+WHILE:				While'('EXPR')''{'STMT'}'
+ASSIGN:				Id '=' EXPR';'
+
+PROCEDURE: 			Id'('ARGS')'';'
+ARGS:				ARG 
+				| 	ARG',' ARGS
+ARG:				EXPR
+
+EXPR: 				OBJ
+				| 	EXPR '+' EXPR
+				| 	EXPR '-' EXPR
+				| 	EXPR '*' EXPR
+				| 	EXPR '/' EXPR
+				| 	EXPR '%' EXPR
+				| 	'('EXPR')'
+
+OBJ:				Id 
+				| 	Literal
+
+%%
+/*programs*/
