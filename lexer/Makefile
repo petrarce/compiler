@@ -28,7 +28,7 @@ install:
 	cp $(target) $(BUILD_DIR)
 
 $(DEPS):
-	@$(MAKE) -C $@
+	$(MAKE) -C $@
 
 prepare:
 	for i in $(DEPS); do \

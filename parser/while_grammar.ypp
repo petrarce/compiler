@@ -4,6 +4,24 @@
 %left '-' '+'
 %left '*' '/'
 %left '%'
+%{
+#include <iostream>
+#include <while_grammar.tab.hpp>
+
+using namespace std;
+
+//TODO:redefine YYSTYPE to custom type	
+
+#ifndef yylex
+#define yylex def_yylex
+#endif
+#ifndef yyerror
+#define yyerror def_yyerror
+#endif
+void def_yyerror(char* str);
+int def_yylex();
+
+%}
 %%
 /*rules*/
 PROG: 				STMT
@@ -52,3 +70,17 @@ OBJ:				Id
 
 %%
 /*programs*/
+void def_yyerror(char* str)
+{
+	printf("PARSING FAILURE: %s", str);
+}
+
+int def_yylex()
+{
+	return 0;
+}
+
+int main()
+{
+	return yyparse();
+}

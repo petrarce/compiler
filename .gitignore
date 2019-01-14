@@ -4,3 +4,4 @@ build/*
 test_main
 *.tab.*
 *.output
+.prepare

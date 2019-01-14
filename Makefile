@@ -11,13 +11,14 @@ SUBDIRS = lexer parser
 
 all: $(SUBDIRS)
 
-$(SUBDIRS): prepare
-	@$(MAKE) -C $@
+$(SUBDIRS): .prepare
+	$(MAKE) -C $@
 
-prepare:
-	@mkdir $(BUILD_DIR) | true
+.prepare:
+	mkdir $(BUILD_DIR) | true
 	for i in $(SUBDIRS); do \
 		make -C $${i} prepare; \
 	done
+	touch .prepare
 
-.PHONY: all $(SUBDIRS) prepare
+.PHONY: all $(SUBDIRS)

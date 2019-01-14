@@ -5,13 +5,12 @@ yacc	:= $(wildcard *.ypp)
 yacc-obj := $(patsubst %.ypp,%.tab.o,$(yacc))
 yacc-hdr := $(patsubst %.ypp,%.tab.hpp,$(yacc))
 yacc-src := $(patsubst %.ypp,%.tab.cpp,$(yacc))
-$(info DEBUG: yacc=$(yacc))
 
 ifeq ($(CONFIG_TEST),y)
-	target = 
+	target = test_main
 	LOCAL_LDFLAGS +=
 else
-	target =
+	target = libparser.a
 	tmpobjects := $(objects)
 	objects = $(filter-out test_main.o,$(tmpobjects))
 endif
