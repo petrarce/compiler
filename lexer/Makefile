@@ -7,7 +7,7 @@ $(info CFLAGS=$(CFLAGS))
 objects = $(subst 	cpp,o,$(shell find *.cpp))
 ifeq ($(CONFIG_TEST),y)
 	target = test_main
-	LDFLAGS += -lnfa -lregexp
+	LOCAL_LDFLAGS += -lnfa -lregexp
 else
 	target = liblexer.a
 	tmpobjects := $(objects)
@@ -19,7 +19,7 @@ all: $(DEPS) build install
 
 build:  $(objects)
 ifeq ($(CONFIG_TEST),y)
-	$(CXX) $(CXXFLAGS) -o $(target)  $(objects) $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -o $(target)  $(objects) $(LDFLAGS) $(LOCAL_LDFLAGS)
 else
 	$(AR) rcs $(target) *.o
 endif 

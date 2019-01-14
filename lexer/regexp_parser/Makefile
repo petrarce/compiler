@@ -5,7 +5,7 @@ yacc	:= $(wildcard *.ypp)
 yacc-obj := $(patsubst %.ypp,%.tab.o,$(yacc))
 ifeq ($(CONFIG_TEST),y)
 	target = test_main
-	LDFLAGS += -lnfa
+	LOCAL_LDFLAGS += -lnfa
 else
 	target = libregexp.a
 	tmpobjects := $(objects)
@@ -29,7 +29,7 @@ $(yacc):
 build: $(yacc-obj) $(objects)
 	echo =======build
 ifeq ($(CONFIG_TEST),y)
-	$(CXX) $(CXXFLAGS) -o test_main $(shell find -name "*.o") $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -o test_main $(shell find -name "*.o") $(LDFLAGS) $(LOCAL_LDFLAGS)
 else
 	$(AR) rcs $(target) *.o
 endif 
