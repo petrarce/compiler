@@ -5,11 +5,13 @@ yacc	:= $(wildcard *.ypp)
 yacc-obj := $(patsubst %.ypp,%.tab.o,$(yacc))
 yacc-hdr := $(patsubst %.ypp,%.tab.hpp,$(yacc))
 yacc-src := $(patsubst %.ypp,%.tab.cpp,$(yacc))
+$(info DEBUG: yacc=$(yacc))
+
 ifeq ($(CONFIG_TEST),y)
-	target = test_main
-	LOCAL_LDFLAGS += -lnfa
+	target = 
+	LOCAL_LDFLAGS +=
 else
-	target = libregexp.a
+	target =
 	tmpobjects := $(objects)
 	objects = $(filter-out test_main.o,$(tmpobjects))
 endif
@@ -40,3 +42,4 @@ install:
 	cp $(target) $(BUILD_DIR)
 
 prepare: $(yacc-src)
+	mv $(yacc-hdr) $(TOPDIR)/include

@@ -20,3 +20,5 @@ else
 endif 
 install:
 	cp $(target) $(BUILD_DIR)
+
+prepare:

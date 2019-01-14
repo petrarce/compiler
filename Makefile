@@ -7,14 +7,17 @@ export CXXFLAGS += -I$(TOPDIR)/include -g --std=c++17 -fsanitize=address
 export CFLAGS += -I$(TOPDIR)/include -g -fsanitize=address
 export LDFLAGS += -L$(BUILD_DIR)
 
-SUBDIRS = lexer
+SUBDIRS = lexer parser
 
-all: prepare $(SUBDIRS)
+all: $(SUBDIRS)
 
-$(SUBDIRS):
+$(SUBDIRS): prepare
 	@$(MAKE) -C $@
 
 prepare:
 	@mkdir $(BUILD_DIR) | true
+	for i in $(SUBDIRS); do \
+		make -C $${i} prepare; \
+	done
 
 .PHONY: all $(SUBDIRS) prepare

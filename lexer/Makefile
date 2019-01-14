@@ -30,4 +30,9 @@ install:
 $(DEPS):
 	@$(MAKE) -C $@
 
+prepare:
+	for i in $(DEPS); do \
+		make -C $${i} prepare; \
+	done
+
 .PHONY: all build install $(DEPS)
