@@ -1,0 +1,7 @@
+MAKING LEXICAL ANALYSER
+(Will do this using bison lex generator)
+1. prepare grammar for while language			:::done
+2. Fix lexer according to prepared grammar
+3. Deploy bison files 
+4. link lexer and parser
+5. try to parse inp.txt
