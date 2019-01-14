@@ -309,9 +309,9 @@ analyse_map_s* nfa::nfa_bt_next(string& token)
 		}
 	}
 
-	if(!this->bt_log.size()){			//if dead - check if in backlog there was etlist one accepting state
+	if(!this->bt_log.size()){			//if dead - check if in backlog there was at list one accepting state
 
-		cout << "string is incorrect" << endl;	//if previously no accepted states was entered - lexical analysis failed
+		printf("string is incorrect: %s", token.begin());	//if previously no accepted states was entered - lexical analysis failed
 		delete analyse_map;
 		return NULL;
 	}
