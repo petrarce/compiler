@@ -1,5 +1,5 @@
 /*declarations*/
-%token Int Real Id If Else While Literal Eps
+%token Int Real Id If Else While Literal
 %start PROG
 %left '-' '+'
 %left '*' '/'
