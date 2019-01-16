@@ -24,49 +24,57 @@ int def_yylex();
 %}
 %%
 /*rules*/
-PROG: 				STMT
+PROG: 				STMT 							/*PROG.ok = STMT.ok*/
 
-STMT: 	
-					DEF STMT
-				| 	_STMT STMT
-				| 	_STMT
-_STMT:			 	IF
-				|	WHILE
-				|	ASSIGN
-				|	PROCEDURE
+STMT: 				DEF STMT 						/*STMT0.ok = DEF1.ok && STMT2.ok, */
+				| 	_STMT STMT 						/*STMT0.ok = _STMT.ok && STMT2.ok*/
+				| 	_STMT 							/*STMT0.ok=STMT1.ok*/
 
-DEF:				DEF _DEF
-				|	_DEF
-_DEF: 				TYPE VARLIST';'
-VARLIST:			Id',' VARLIST
-				|	Id '=' EXPR',' VARLIST
-				|	Id
-				|	Id '=' EXPR
-TYPE: 				Int 
-				| 	Real
+_STMT:			 	IF 								/*_STMT0.ok=IF1.ok*/
+				|	WHILE 							/*_STMT0.ok=WHILE1.ok*/
+				|	ASSIGN							/*_STMT0.ok=ASSIGN1.ok*/
+				|	PROCEDURE						/*_STMT0.ok=PROCEDURE1.ok*/
+
+DEF:				DEF _DEF						/*DEF0.ok=DEF1.ok&&_DEF2.ok*/
+				|	_DEF 							/*DEF0.ok=_DEF1.ok*/
+
+_DEF: 				TYPE VARLIST';'					/*_DEF0.ok=VARLIST.ok*/
+													/*VARLIST1.type=TYPE.val*/
+VARLIST:			Id',' VARLIST 					/*VARLIST0.ok = !is_Id_in_stbl(Id.val)&&VARLIST2.ok*/
+													/*deploy_stbl(Id.val, VARLIST0.type)*/
+													/*VARLIST2.type=VARLIST0.type*/
+				|	Id '=' EXPR',' VARLIST    		/*VARLIST0.ok = !is_Id_in_stbl(Id.val)&&EXPR3.ok&&VARLIST5.ok*/
+													/*deploy_stbl(Id.val, VARLIST0.type)*/
+													/*VARLIST5.type=VARLIST0.type*/
+				|	Id 								/*VARLIST0.ok = !is_Id_in_stbl(Id.val)*/
+													/*deploy_stbl(Id.val, VARLIST0.type)*/
+				|	Id '=' EXPR 					/*VARLIST0.ok = !is_Id_in_stbl(Id.val)&&EXPR3.ok*/
+													/*deploy_stbl(Id.val, VARLIST0.type)*/
+TYPE: 				Int 							/*TYPE.val=Int.val*/
+				| 	Real 							/*TYPE.val=Real.val*/
 
 
 
 
-IF:					If'('EXPR')''{'STMT'}'Else'{'STMT'}'
-WHILE:				While'('EXPR')''{'STMT'}'
-ASSIGN:				Id '=' EXPR';'
+IF:					If'('EXPR')''{'STMT'}'Else'{'STMT'}'	/*IF0.ok=EXPR3.ok && STMT6.ok && STMT10.ok*/
+WHILE:				While'('EXPR')''{'STMT'}'				/*IF0.ok=EXPR3.ok && STMT6.ok*/
+ASSIGN:				Id '=' EXPR';'							/*ASSIGN0.ok = is_Id_in_stbl(Id.val) && EXPR.ok*/
 
-PROCEDURE: 			Id'('ARGS')'';'
-ARGS:				ARG 
-				| 	ARG',' ARGS
-ARG:				EXPR
+PROCEDURE: 			Id'('ARGS')'';'							/*PROCEDURE0.ok=ARGS3.ok*/
+ARGS:				ARG 									/*ARGS0.ok = ARG1.ok*/
+				| 	ARG',' ARGS 							/*ARGS0.ok = ARG1.ok && ARGS3.ok*/
+ARG:				EXPR 									/*ARG0.ok = EXPR.ok*/
 
-EXPR: 				OBJ
-				| 	EXPR '+' EXPR
-				| 	EXPR '-' EXPR
-				| 	EXPR '*' EXPR
-				| 	EXPR '/' EXPR
-				| 	EXPR '%' EXPR
-				| 	'('EXPR')'
+EXPR: 				OBJ 									/*EXPR0.ok=OBJ.ok*/
+				| 	EXPR '+' EXPR 							/*EXPR0.ok=EXPR1.ok && EXPR3.ok*/
+				| 	EXPR '-' EXPR 							/*EXPR0.ok=EXPR1.ok && EXPR3.ok*/
+				| 	EXPR '*' EXPR 							/*EXPR0.ok=EXPR1.ok && EXPR3.ok*/
+				| 	EXPR '/' EXPR 							/*EXPR0.ok=EXPR1.ok && EXPR3.ok*/
+				| 	EXPR '%' EXPR 							/*EXPR0.ok=EXPR1.ok && EXPR3.ok*/
+				| 	'('EXPR')' 								/*EXPR0.ok=EXPR2.ok*/
 
-OBJ:				Id 
-				| 	Literal
+OBJ:				Id 										/*OBJ0.ok = is_Id_in_stbl(Id.val)*/
+				| 	Literal 								/*OBJ0.ok = true*/
 
 %%
 /*programs*/
