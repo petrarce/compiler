@@ -4,7 +4,7 @@
 
 using namespace std;
 
-opcode_e 		state_c::transition_table_add_new_entry(uint8_t symb, vector<uint32_t> states)
+opcode 		state_c::transition_table_add_new_entry(uint8_t symb, vector<uint32_t> states)
 {
 	if(this->transition_table[symb].symb)
 		return STATUS_ALREADY_EXISTS;
@@ -17,7 +17,7 @@ opcode_e 		state_c::transition_table_add_new_entry(uint8_t symb, vector<uint32_t
 	return STATUS_OK;
 
 }
-opcode_e 		state_c::transition_table_append_entry(uint8_t symb, uint32_t state)
+opcode 		state_c::transition_table_append_entry(uint8_t symb, uint32_t state)
 {
 	state_c **ptr;
 	vector<uint32_t> vec; vec.push_back(state);
@@ -30,7 +30,7 @@ opcode_e 		state_c::transition_table_append_entry(uint8_t symb, uint32_t state)
 	return STATUS_OK;
 }
 
-opcode_e 		state_c::transition_table_add_entry(uint8_t symb, uint32_t state_id)
+opcode 		state_c::transition_table_add_entry(uint8_t symb, uint32_t state_id)
 {
 	return transition_table_append_entry(symb, state_id);
 }

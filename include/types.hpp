@@ -18,6 +18,17 @@ enum SATOKENS
 	REGEXP
 };
 
+enum opcode
+{
+	STATUS_OK,
+	STATUS_NOK,
+	STATUS_ALREADY_EXISTS,
+	STATUS_INVALID_ARG,
+	STATUS_NO_ENTRY,
+	STATUS_ALLOC_FAILED,
+	STATUS_STRING_IS_EMPTY
+};
+
 static vector<uint8_t> sa_tokens = {
 	COMMENT,
 	ID,
