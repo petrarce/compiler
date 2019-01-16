@@ -32,6 +32,7 @@ public:
 	opcode del_entry(string id);
 	//Tries to find entry in a bucket. On success returns pointer to entry, on failure returns 0
 	stbl_entry* find_entry(string id);
+	opcode print();
 	stbl(uint32_t);
 	~stbl();
 };

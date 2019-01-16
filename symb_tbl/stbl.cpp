@@ -100,6 +100,22 @@ opcode stbl::clean_buckets()
 	return STATUS_OK;
 }
 
+opcode stbl::print()
+{
+	printf("___________________________________\n");
+	printf("|\tID\t|\tTYPE\t|\n");
+	printf("___________________________________\n");
+	for(stbl_entry* entry : this->buckets){
+		while(entry){
+			printf("|\t%s\t|\t%s\t|\n", entry->id.begin(), entry->type.begin());
+			entry = entry->next;
+		}
+	}
+	printf("___________________________________\n");
+
+	return STATUS_OK;
+}
+
 stbl::stbl(uint32_t size)
 {
 	this->buckets.resize(size);
