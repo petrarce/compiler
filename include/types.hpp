@@ -52,6 +52,8 @@ static vector<string> la_str = {
 	"REGEXP"
 };
 
+#define pr_dbg(msg, args...) printf("[%s:%d] " msg "\n", ##args)
+
 #define assert(exp) { \
 	if(exp) { \
 		printf("[%s,%d]assertion failes: %s", __FUNCTION__, __LINE__, #exp); \
