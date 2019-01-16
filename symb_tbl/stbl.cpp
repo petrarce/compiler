@@ -42,6 +42,31 @@ opcode stbl::add_entry(string id, string type)
 
 opcode stbl::del_entry(string id)
 {
+	uint32_t bucket_num = calc_hash(id);
+	stbl_entry* cur_entry = NULL;
+	if(!this->buckets[bucket_num]){
+		return STATUS_OK;
+	}
+
+	//delete element in the head of bucket
+	if(this->buckets[bucket_num]->id == id){
+		stbl_entry* next = this->buckets[bucket_num]->next;
+		delete this->buckets[bucket_num];
+		this->buckets[bucket_num] = next;
+		return STATUS_OK;
+	}
+
+	//delete element that is not in the head of bucket
+	cur_entry = this->buckets[bucket_num];
+	while(cur_entry->next){
+		if(cur_entry->next->id == id){
+			stbl_entry* next = cur_entry->next->next;
+			delete cur_entry->next;
+			cur_entry->next = next;
+			break;
+		}
+	}
+
 	return STATUS_OK;
 }
 

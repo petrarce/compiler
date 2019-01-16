@@ -10,6 +10,7 @@ int main(int argc, char** argv)
 	tbl.add_entry("id3", "float");
 
 	stbl_entry* entry = tbl.find_entry("id1");
+	tbl.del_entry("id2");
 	assert(!entry);
 
 	return 0;
