@@ -31,7 +31,7 @@ $(yacc-src):
 build: $(yacc-obj) $(objects)
 	echo =======build
 ifeq ($(CONFIG_TEST),y)
-	$(CXX) $(CXXFLAGS) -o $(target) *.o $(LDFLAGS) $(LOCAL_LDFLAGS)
+	$(CXX) $(CXXFLAGS) -o $(target) *.o $(LOCAL_LDFLAGS) $(LDFLAGS)
 else
 	$(AR) rcs $(target) *.o
 endif 

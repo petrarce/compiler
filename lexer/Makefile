@@ -19,7 +19,7 @@ all: $(DEPS) build install
 
 build:  $(objects)
 ifeq ($(CONFIG_TEST),y)
-	$(CXX) $(CXXFLAGS) -o $(target)  $(objects) $(LDFLAGS) $(LOCAL_LDFLAGS)
+	$(CXX) $(CXXFLAGS) -o $(target)  $(objects) $(LOCAL_LDFLAGS) $(LDFLAGS)
 else
 	$(AR) rcs $(target) *.o
 endif 

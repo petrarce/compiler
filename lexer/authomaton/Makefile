@@ -14,7 +14,7 @@ endif
 all: build install
 build:  $(objects)
 ifeq ($(CONFIG_TEST),y)
-	$(CXX) $(CXXFLAGS) -o test_main $(objects)
+	$(CXX) $(CXXFLAGS) -o test_main $(objects) $(LDFLAGS)
 else
 	$(AR) rcs $(target) *.o
 endif 
