@@ -39,7 +39,7 @@ DEF:				DEF _DEF						/*DEF0.ok=DEF1.ok&&_DEF2.ok*/
 				|	_DEF 							/*DEF0.ok=_DEF1.ok*/
 
 _DEF: 				TYPE VARLIST';'					/*_DEF0.ok=VARLIST.ok*/
-													/*VARLIST1.type=TYPE.val*/
+													/*VARLIST2.type=TYPE1.val*/
 VARLIST:			Id',' VARLIST 					/*VARLIST0.ok = !is_Id_in_stbl(Id.val)&&VARLIST2.ok*/
 													/*deploy_stbl(Id.val, VARLIST0.type)*/
 													/*VARLIST2.type=VARLIST0.type*/

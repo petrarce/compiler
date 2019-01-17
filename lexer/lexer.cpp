@@ -8,7 +8,7 @@ using namespace std;
 
 lexer::lexer(vector<string> regex_vec, vector<enum SATOKENS> tokens_vec){
 	nfa tmp_nfa;
-	assert(regex_vec.size() != tokens_vec.size());
+	assert(regex_vec.size() == tokens_vec.size());
 
 	for(int i = 0; i < regex_vec.size(); i++){
 		assert(regex2nfa(regex_vec[i], tokens_vec[i], tmp_nfa) != 0);

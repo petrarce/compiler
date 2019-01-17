@@ -13,7 +13,6 @@ int main(int argc, char** argv)
 	tbl.print();
 	tbl.del_entry("id2");
 	tbl.print();
-	assert(!entry);
 
 	return 0;
 }

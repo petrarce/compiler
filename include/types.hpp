@@ -2,6 +2,7 @@
 #include <vector>
 #include <cstdint>
 #include <string>
+#include <boost/stacktrace.hpp>
 
 using namespace std;
 
@@ -52,11 +53,12 @@ static vector<string> la_str = {
 	"REGEXP"
 };
 
-#define pr_dbg(msg, args...) printf("[%s:%d] " msg "\n", ##args)
+#define pr_dbg(msg, args...) printf("[%s:%d] " msg "\n", __FUNCTION__, __LINE__, ##args)
 
 #define assert(exp) { \
-	if(exp) { \
-		printf("[%s,%d]assertion failes: %s", __FUNCTION__, __LINE__, #exp); \
+	if(!(exp)) { \
+		pr_dbg("assertion failes: %s", #exp); \
+		cout << boost::stacktrace::stacktrace(); \
 		exit(-1); \
 	} \
 }

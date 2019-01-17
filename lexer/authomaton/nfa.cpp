@@ -2,13 +2,7 @@
 #include <string>
 #include <cstring>
 #include <algorithm>
-
-#ifdef DEBUG
-#include <assert>
-#else
-#define assert(exp) 
-#endif
-
+#include <types.hpp>
 class inv_arg_ex inv_arg_ex_obj;
 class empty_str_ex empty_str_ex_obj;
 

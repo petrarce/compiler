@@ -8,8 +8,8 @@ using namespace std;
 
 opcode stbl_entry::set_last(stbl_entry* entry)
 {
-	assert(!entry);
-	assert(this == entry);
+	assert(entry);
+	assert(this != entry);
 	stbl_entry* cur = this;
 	while(cur->next){
 		cur = cur->next;
@@ -27,7 +27,7 @@ uint32_t stbl::calc_hash(string id)
 
 opcode stbl::add_entry(string id, string type)
 {
-	assert(find_entry(id));
+	assert(!find_entry(id));
 
 	uint32_t bucket_num = calc_hash(id);
 	stbl_entry* new_entry = new stbl_entry(id, type);
