@@ -134,16 +134,11 @@ nfa 	nfa::nfa_convert_concat(nfa& nfa_a, nfa& nfa_b)
 nfa 	nfa::nfa_convert_union(nfa& nfa_a, nfa& nfa_b)
 {
 	nfa temp_nfa;
-	//create 0 state
-	state_c zero_state;
-	zero_state.id = 0;
-	temp_nfa.states.push_back(zero_state);
-	//for all states in nfa_a:
 	push_states_with_offset(temp_nfa, nfa_a);
-	temp_nfa.link_state(zero_state.id, EPS, 1);
+	temp_nfa.link_state(0, EPS, 1);
 
 	push_states_with_offset(temp_nfa, nfa_b);
-	temp_nfa.link_state(zero_state.id, EPS, nfa_a.states.size()+1);
+	temp_nfa.link_state(0, EPS, nfa_a.states.size()+1);
 
 	return temp_nfa;
 }
