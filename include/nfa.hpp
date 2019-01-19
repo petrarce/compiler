@@ -35,9 +35,9 @@ private:
 public:
 	friend void push_states_with_offset(nfa&, nfa&);
 
-	opcode link_state(uint32_t , char , uint32_t );
-	opcode link_state(uint32_t , string& , uint32_t );
-	opcode link_state(string&);
+	opcode link_state(const uint32_t , const char , const uint32_t );
+	opcode link_state(const uint32_t , const string& , const uint32_t );
+	opcode link_state(const string&);
 
 	opcode set_accepting(uint32_t, uint32_t);
 	opcode set_accepting(vector<uint32_t> , uint32_t);
@@ -57,8 +57,7 @@ public:
 
 
 
-	nfa(){};
-	nfa(uint32_t states_count);
+	nfa();
 	~nfa();
 
 };

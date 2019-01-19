@@ -133,7 +133,7 @@ nfa 	nfa::nfa_convert_concat(nfa& nfa_a, nfa& nfa_b)
 
 nfa 	nfa::nfa_convert_union(nfa& nfa_a, nfa& nfa_b)
 {
-	nfa temp_nfa(0);
+	nfa temp_nfa;
 	//create 0 state
 	state_c zero_state;
 	zero_state.id = 0;
@@ -169,11 +169,20 @@ vector<uint32_t> nfa::transition_get_next_states(uint32_t state, uint8_t symb)
 opcode nfa::link_state(uint32_t state1, char symb, uint32_t state2)
 {
 	opcode status;
+	uint32_t state_highest = (state1>state2)?state1:state2;
+	if(this->states.size() < (state_highest + 1)){ //state ids are started from 0
+		uint32_t max_state_id = this->states.back().id;
+		this->states.resize(state_highest + 1);
+		for(int i = max_state_id + 1; i < this->states.size(); i++){
+			this->states[i].id = i;
+		}
+	}
+
 	status = states[state1].transition_table_add_entry(symb, state2);
 	return status;
 }
 
-opcode nfa::link_state(uint32_t state1, string& symbs, uint32_t state2)
+opcode nfa::link_state(uint32_t state1, const string& symbs, uint32_t state2)
 {
 	opcode status;
 	//if string is empty link failed states with eps transition
@@ -188,7 +197,7 @@ opcode nfa::link_state(uint32_t state1, string& symbs, uint32_t state2)
 
 //simple input parser overload
 //regex for parser: [0-9][0-9]*@X*@[0-9][0-9]* 
-opcode nfa::link_state(string& str)
+opcode nfa::link_state(const string& str)
 {
 	uint8_t state = 0;
 	string st1, st2, symbs;
@@ -379,13 +388,10 @@ opcode nfa::set_analyse(enum SATOKENS token){
 	return STATUS_OK;
 }
 
-nfa::nfa(uint32_t states_count)
+nfa::nfa()
 {	
-	this->states.resize(states_count);
-	for(int i = 0; i < this->states.size(); i++){
-		this->states[i].id = i;
-	}
-
+	this->states.resize(1);
+	this->states[0].id = 0;
 	init_cur_state_list();
 }
 

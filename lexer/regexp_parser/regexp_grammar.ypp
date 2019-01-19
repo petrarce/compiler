@@ -21,13 +21,15 @@
 
 using namespace std;
 
+#define printf(msg, args...)
+
 nfa final_nfa;
 vector<char> regexp_special_symbs = {'*', '|', '&', '-', '(', ')', '{', '}', ','};
 %}
 
 %%
 /*rules*/
-S 	: Exp								{final_nfa = $1; cout << "S=>Exp " << endl;};
+S 	: Exp								{final_nfa = $1; printf("S=>Exp ");};
 
 Exp	:
 		|	Exp '|' Exp 				{ $$ = nfa::nfa_convert_union($1 ,$3);
@@ -69,24 +71,24 @@ Set_i: 		Symb ',' Set_i				{ $$ = nfa::nfa_convert_union($1 ,$3);
 											printf("Set_i=>Symb , Set_i;\n");};
 		| 	Symb						{ $$ = $1; printf("Set_i=>Symb;\n");};
 
-Symb: 		'a'							{ 	nfa new_nfa(2); 
+Symb: 		'a'							{ 	nfa new_nfa; 
 											string link_str = "0@a@1\\";
 											new_nfa.link_state(link_str); 
 											new_nfa.set_accepting(1, REGEXP);
 											$$ = new_nfa;
 											printf("Symb=>a\n");}
-		| 	'b'							{ 	nfa new_nfa(2); 
+		| 	'b'							{ 	nfa new_nfa; 
 											string link_str = "0@b@1\\";
 											new_nfa.link_state(link_str); 
 											new_nfa.set_accepting(1, REGEXP);
 											$$ = new_nfa; printf("Symb=>b\n");}
-		|	'0'							{ 	nfa new_nfa(2); 
+		|	'0'							{ 	nfa new_nfa;
 											string link_str = "0@@1\\";
 											new_nfa.link_state(link_str); 
 											new_nfa.set_accepting(1, REGEXP);
 											$$ = new_nfa;
 											printf("Symb=>eps\n");}
-		|	ASCII						{ 	nfa new_nfa(2); 
+		|	ASCII						{ 	nfa new_nfa;
 											string link_str = "0@x@1\\";
 											//set symbol received from lexer
 											link_str[2] = lex_str.inp_buf[lex_str.cur_pos-1];

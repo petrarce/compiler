@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <vector>
 #include <cstdint>
 #include <string>
@@ -53,7 +54,7 @@ static vector<string> la_str = {
 	"REGEXP"
 };
 
-#define pr_dbg(msg, args...) printf("[%s:%d] " msg "\n", __FUNCTION__, __LINE__, ##args)
+#define pr_dbg(msg, args...) printf("[%s:%d] " msg "\n", __FILE__, __LINE__, ##args)
 
 #define assert(exp) { \
 	if(!(exp)) { \

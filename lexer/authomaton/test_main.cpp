@@ -62,7 +62,7 @@ int main(int argc, char** argv)
 							  "73@\"@74\\74@"a_z A_Z " \t" NUM SPEC"@75\\75@"a_z A_Z " \t" NUM SPEC"@75\\75@\"@76\\" ;
 
 
-	nfa new_nfa(77);
+	nfa new_nfa;
 	new_nfa.link_state(comment_atomaton);
 	new_nfa.set_accepting({7,66}, COMMENT);
 	new_nfa.set_accepting(63, ID);
