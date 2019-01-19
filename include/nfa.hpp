@@ -38,6 +38,7 @@ public:
 	opcode link_state(const uint32_t , const char , const uint32_t );
 	opcode link_state(const uint32_t , const string& , const uint32_t );
 	opcode link_state(const string&);
+	string print_links();
 
 	opcode set_accepting(uint32_t, uint32_t);
 	opcode set_accepting(vector<uint32_t> , uint32_t);

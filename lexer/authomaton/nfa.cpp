@@ -239,6 +239,39 @@ opcode nfa::link_state(const string& str)
 	return STATUS_OK;
 }
 
+string nfa::print_links()
+{
+	string res;
+
+	res.reserve(this->states.size()*this->states.size()*256);//number of symbols
+	for(const state_c& st1 : this->states ){
+		for(const trans_table_t& tbl : st1.transition_table){
+			for(uint32_t st2 : tbl.state_ids){
+				string st1_str, st2_str, symb = "@";
+				st1_str += to_string(st1.id);
+				st2_str += to_string(st2);
+				symb[0] = tbl.symb;
+				if(symb[0]!=EPS){
+					res += st1_str + "@" + symb + "@" + st2_str + "\\";
+				} else {
+					res += st1_str + "@" + "@" + st2_str + "\\";
+				}
+			}
+		}
+	}
+	res.shrink_to_fit();
+
+	for(int i = 0; i < res.size(); i++){
+		if(!(i%4)){
+			printf("\n");
+		}
+		printf("\t0x%x,", res[i]);
+	}
+	printf("\n");
+	
+	return res;
+}
+
 
 opcode nfa::nfa_run(string& str)
 {
