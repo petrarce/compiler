@@ -42,6 +42,7 @@ public:
 
 	opcode set_accepting(uint32_t, uint32_t);
 	opcode set_accepting(vector<uint32_t> , uint32_t);
+	vector<uint32_t> get_accepting();
 
 	opcode set_analyse(enum SATOKENS token);
 
