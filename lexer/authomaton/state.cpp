@@ -25,6 +25,12 @@ opcode 		state_c::transition_table_append_entry(uint8_t symb, uint32_t state)
 	if(!this->transition_table[symb].symb)
 		return transition_table_add_new_entry(symb, vec);
 
+	//check that all state is already in the list, if yes - just return
+	for(uint32_t st : this->transition_table[symb].state_ids){
+		if(st == state){
+			return STATUS_OK;
+		}
+	}
 	this->transition_table[symb].state_ids.push_back(state);
 
 	return STATUS_OK;
