@@ -238,7 +238,6 @@ string nfa::print_links()
 {
 	string res;
 
-	res.reserve(this->states.size()*this->states.size()*256);//number of symbols
 	for(const state_c& st1 : this->states ){
 		for(const trans_table_t& tbl : st1.transition_table){
 			for(uint32_t st2 : tbl.state_ids){
@@ -254,38 +253,11 @@ string nfa::print_links()
 			}
 		}
 	}
-	res.shrink_to_fit();
-
-	for(int i = 0; i < res.size(); i++){
-		if(!(i%4)){
-			printf("\n");
-		}
-		printf("\t0x%x,", res[i]);
-	}
-	printf("\n");
 	
 	return res;
 }
 
 
-opcode nfa::nfa_run(string& str)
-{
-	int32_t res = 0;
-	opcode status;
-	try{
-		if(!str.size())
-			throw empty_str_ex_obj;
-		status = nfa_reset();
-		for(char c : str)
-			nfa_next(c);
-	}
-	catch(empty_str_ex& e)
-	{
-		e.print_ex("currently string is empty");
-		throw exception();
-	}
-	return STATUS_OK;
-}
 
 uint32_t nfa::nfa_status()
 {
@@ -347,7 +319,7 @@ analyse_map_s* nfa::nfa_bt_next(string& token)
 		return NULL;
 	}
 	//if was - we pring latest accepted analysis, and remove regarding string from nput
-	analyse_map->str = token.substr(0, bt_log.back()[1]+1);
+	analyse_map->analysed_str = token.substr(0, bt_log.back()[1]+1);
 	analyse_map->analyse = this->states[bt_log.back()[0]].analyse;
 	token.erase(0, bt_log.back()[1]+1);
 	bt_log.clear();
@@ -364,7 +336,7 @@ opcode nfa::nfa_bt_run(string& token, vector<string>& strs, vector<uint32_t> ign
 			return STATUS_NOK;
 		assert(analyse_map->analyse <= strs.size());
 		if(find(ignore.begin(), ignore.end(), analyse_map->analyse) == ignore.end()){
-			printf("(\"%s\", %s)\n", analyse_map->str.begin(), strs[analyse_map->analyse].begin());
+			printf("(\"%s\", %s)\n", analyse_map->analysed_str.begin(), strs[analyse_map->analyse].begin());
 		}
 		delete analyse_map;
 	}

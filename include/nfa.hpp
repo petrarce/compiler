@@ -12,7 +12,7 @@
 using namespace std;
 
 typedef struct {
-	string str;
+	string analysed_str;
 	uint32_t analyse;
 } analyse_map_s;
 
@@ -50,7 +50,6 @@ public:
 	static nfa nfa_convert_union(nfa&, nfa&);
 
 	void nfa_next(char);
-	opcode nfa_run(string&);
 	analyse_map_s* nfa_bt_next(string&);
 	opcode nfa_bt_run(string&, vector<string>&, vector<uint32_t>);
 	uint32_t nfa_status();
