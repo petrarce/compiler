@@ -11,5 +11,7 @@ public:
 	nfa prod_nfa;
 public:
 	lexer(vector<string> regex_vec, vector<enum SATOKENS> tokens_vec);
+	lexer();
+
 	~lexer();
 };
