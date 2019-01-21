@@ -1,34 +1,27 @@
-DEPS := authomaton
+DEPS := 
 DEPS += regexp_parser
 
 #set CONFIG_TEST=y to build test application for the sources
 $(info CFLAGS=$(CFLAGS))
 
-objects = $(subst 	cpp,o,$(shell find *.cpp))
-ifeq ($(CONFIG_TEST),y)
-	target = test_main
-	LOCAL_LDFLAGS += -lnfa -lregexp
-else
-	target = liblexer.a
-	tmpobjects := $(objects)
-	objects = $(filter-out test_main.o,$(tmpobjects))
-endif
+target = lexer
+LOCAL_LDFLAGS=-lnfa -lregexp
+DEPS= authomaton regexp_parser
 
+all-obj = $(wildcard *.cpp)
+obj = $(patsubst %.cpp,%.o,$(filter-out test%,$(all-obj)))
+include $(TOPDIR)/Makefile.test
 
-all: $(DEPS) build install
+all: $(DEPS) build $(RUN_TEST) install 
 
-build:  $(objects)
-ifeq ($(CONFIG_TEST),y)
-	$(CXX) $(CXXFLAGS) -o $(target)  $(objects) $(LOCAL_LDFLAGS) $(LDFLAGS)
-else
-	$(AR) rcs $(target) *.o
-endif 
+build:  $(obj)
+	$(AR) rcs lib$(target).a $(obj)
 
 install:
-	cp $(target) $(BUILD_DIR)
+	cp lib$(target).a $(BUILD_DIR)
 
 $(DEPS):
-	$(MAKE) -C $@
+	$(MAKE) -C $@ all
 
 prepare:
 	for i in $(DEPS); do \

@@ -1,0 +1,17 @@
+ifeq ($(CONFIG_TEST),y)
+RUN_TEST=test
+endif
+
+all-obj = $(wildcard *.cpp)
+test-obj = $(patsubst %.cpp,%.o,$(filter test%,$(all-obj)))
+
+test-target = $(patsubst %.o,%,$(test-obj))
+$(info test-target=$(test-target))
+
+test: $(test-target)
+	./$(test-target) || true
+
+
+$(test-target): $(test-obj)
+	#target should be defined in the file, that includes Makefile.test
+	$(CXX) $(CXXFLAGS) -o $@ $(test-obj) -L. -l$(target) $(LOCAL_LDFLAGS) $(LDFLAGS) 

@@ -12,7 +12,7 @@ SUBDIRS = lexer parser symb_tbl
 all: $(SUBDIRS)
 
 $(SUBDIRS): .prepare
-	$(MAKE) -C $@
+	$(MAKE) -C $@ all
 
 .prepare:
 	mkdir $(BUILD_DIR) | true
