@@ -1,24 +1,17 @@
-#set CONFIG_TEST=y to build test application for the sources
-src 	:= $(wildcard *.cpp)
-objects := $(patsubst %.cpp,%.o,$(src))
+target = regexp
+LOCAL_LDFLAGS=-lnfa
+DEPS=
+
+all-obj = $(wildcard *.cpp)
+obj = $(patsubst %.cpp,%.o,$(filter-out test%,$(all-obj)))
+include $(TOPDIR)/Makefile.test
+
 yacc	:= $(wildcard *.ypp)
 yacc-obj := $(patsubst %.ypp,%.tab.o,$(yacc))
 yacc-hdr := $(patsubst %.ypp,%.tab.hpp,$(yacc))
 yacc-src := $(patsubst %.ypp,%.tab.cpp,$(yacc))
-ifeq ($(CONFIG_TEST),y)
-	target = test_main
-	LOCAL_LDFLAGS += -lnfa
-else
-	target = libregexp.a
-	tmpobjects := $(objects)
-	objects = $(filter-out test_main.o,$(tmpobjects))
-endif
 
-
-
-.PHONY: all build install prepare
-
-all: build install
+prepare: $(yacc-src)
 
 $(yacc-obj): $(yacc-src)
 	echo =======$@
@@ -28,15 +21,17 @@ $(yacc-src):
 	echo =======$@
 	bison -v -d $(patsubst %.tab.cpp,%.ypp,$@)
 
-build: $(yacc-obj) $(objects)
-	echo =======build
-ifeq ($(CONFIG_TEST),y)
-	$(CXX) $(CXXFLAGS) -o $(target) *.o $(LOCAL_LDFLAGS) $(LDFLAGS)
-else
-	$(AR) rcs $(target) *.o
-endif 
+all: $(DEPS) build $(RUN_TEST) install 
+
+build:  $(obj)
+	$(AR) rcs lib$(target).a $(obj)
 
 install:
-	cp $(target) $(BUILD_DIR)
+	cp lib$(target).a $(BUILD_DIR)
 
-prepare: $(yacc-src)
+$(DEPS):
+	$(MAKE) -C $@ all
+
+
+
+.PHONY: all build install $(DEPS)

@@ -1,9 +1,3 @@
-DEPS := 
-DEPS += regexp_parser
-
-#set CONFIG_TEST=y to build test application for the sources
-$(info CFLAGS=$(CFLAGS))
-
 target = lexer
 LOCAL_LDFLAGS=-lnfa -lregexp
 DEPS= authomaton regexp_parser
