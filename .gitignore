@@ -5,3 +5,4 @@ test_main
 *.tab.*
 *.output
 .prepare
+test_unit

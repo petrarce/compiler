@@ -9,8 +9,6 @@ test-target = $(patsubst %.o,%,$(test-obj))
 $(info test-target=$(test-target))
 
 test: $(test-target)
-	./$(test-target) || true
-
 
 $(test-target): $(test-obj)
 	#target should be defined in the file, that includes Makefile.test
