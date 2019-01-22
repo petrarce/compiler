@@ -31,6 +31,8 @@ private:
 	opcode nfa_clause();
 	vector<uint32_t>  transition_get_next_states(uint32_t , uint8_t );
 	opcode nfa_bt_log_save(uint32_t state,uint32_t position);
+	uint32_t nfa_status();
+	void nfa_next(char);
 
 public:
 	friend void push_states_with_offset(nfa&, nfa&);
@@ -38,22 +40,23 @@ public:
 	opcode link_state(const uint32_t , const char , const uint32_t );
 	opcode link_state(const uint32_t , const string& , const uint32_t );
 	opcode link_state(const string&);
-	string print_links();
+	string get_links();
 
-	opcode set_accepting(uint32_t, uint32_t);
-	opcode set_accepting(vector<uint32_t> , uint32_t);
+	//set state analysis to token
+	opcode set_accepting(uint32_t, enum SATOKENS token);
+	opcode set_accepting(vector<uint32_t> , enum SATOKENS token);
 	vector<uint32_t> get_accepting();
-
+	//set specified analysys for all states in nfa
 	opcode set_analyse(enum SATOKENS token);
 
 	static nfa nfa_convert_clausure(nfa& );
 	static nfa nfa_convert_concat(nfa&, nfa&);
 	static nfa nfa_convert_union(nfa&, nfa&);
 
-	void nfa_next(char);
 	analyse_map_s* nfa_bt_next(string&);
 	opcode nfa_bt_run(string&, vector<string>&, vector<uint32_t>);
-	uint32_t nfa_status();
+
+
 	opcode nfa_reset();
 
 

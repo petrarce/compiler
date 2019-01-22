@@ -234,7 +234,7 @@ opcode nfa::link_state(const string& str)
 	return STATUS_OK;
 }
 
-string nfa::print_links()
+string nfa::get_links()
 {
 	string res;
 
@@ -365,7 +365,7 @@ void nfa::nfa_next(char symb)
 
 }
 
-opcode nfa::set_accepting(vector<uint32_t> states, uint32_t analyse)
+opcode nfa::set_accepting(vector<uint32_t> states, enum SATOKENS analyse)
 {
 	for(uint32_t st : states){
 		this->states[st].is_accepting 	= true;
@@ -373,7 +373,7 @@ opcode nfa::set_accepting(vector<uint32_t> states, uint32_t analyse)
 	}
 }
 
-opcode nfa::set_accepting(uint32_t state, uint32_t analyse)
+opcode nfa::set_accepting(uint32_t state, enum SATOKENS analyse)
 {
 	this->states[state].is_accepting = true;
 	this->states[state].analyse		 = analyse;

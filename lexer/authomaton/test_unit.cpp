@@ -11,19 +11,19 @@ BOOST_AUTO_TEST_CASE(NFA_check_links)
 	string required_str;
 
 	test_nfa.link_state(0,'a',1);
-	test = test_nfa.print_links();
+	test = test_nfa.get_links();
 	required_str = "0@a@1\\";
 	BOOST_CHECK_MESSAGE(test == required_str, 
 		"test=" << test << ", instead of " << required_str);
 
 	test_nfa.link_state(0,"abcd",1);
-	test = test_nfa.print_links();	
+	test = test_nfa.get_links();	
 	required_str = "0@a@1\\0@b@1\\0@c@1\\0@d@1\\";
 	BOOST_CHECK_MESSAGE(test == required_str, 
 		"test=" << test << ", instead of " << required_str);
 
 	test_nfa.link_state("0@abcd@1\\");
-	test = test_nfa.print_links();	
+	test = test_nfa.get_links();	
 	required_str = "0@a@1\\0@b@1\\0@c@1\\0@d@1\\";
 	BOOST_CHECK_MESSAGE(test == required_str, 
 		"test=" << test << ", instead of " << required_str);
