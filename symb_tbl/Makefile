@@ -1,37 +1,22 @@
-DEPS := 
+target = stab
+LOCAL_LDFLAGS=
+DEPS=
 
-#set CONFIG_TEST=y to build test application for the sources
-$(info CFLAGS=$(CFLAGS))
+all-obj = $(wildcard *.cpp)
+obj = $(patsubst %.cpp,%.o,$(filter-out test%,$(all-obj)))
+include $(TOPDIR)/Makefile.test
 
-objects = $(subst 	cpp,o,$(shell find *.cpp))
-ifeq ($(CONFIG_TEST),y)
-	target = test_main
-	LOCAL_LDFLAGS +=
-else
-	target = libstbl.a
-	tmpobjects := $(objects)
-	objects = $(filter-out test_main.o,$(tmpobjects))
-endif
+all: $(DEPS) build $(RUN_TEST) install 
 
-
-all: $(DEPS) build install
-
-build:  $(objects)
-ifeq ($(CONFIG_TEST),y)
-	$(CXX) $(CXXFLAGS) -o $(target)  $(objects) $(LDFLAGS) $(LOCAL_LDFLAGS)
-else
-	$(AR) rcs $(target) *.o
-endif 
+build:  $(obj)
+	$(AR) rcs lib$(target).a $(obj)
 
 install:
-	cp $(target) $(BUILD_DIR)
+	cp lib$(target).a $(BUILD_DIR)
 
 $(DEPS):
-	$(MAKE) -C $@
+	$(MAKE) -C $@ all
 
 prepare:
-	for i in $(DEPS); do \
-		make -C $${i} prepare; \
-	done
 
 .PHONY: all build install $(DEPS)
