@@ -45,7 +45,7 @@ public:
 	//set state analysis to token
 	opcode set_accepting(uint32_t, enum SATOKENS token);
 	opcode set_accepting(vector<uint32_t> , enum SATOKENS token);
-	vector<uint32_t> get_accepting();
+	vector<pair<uint32_t, uint32_t>> get_accepting();
 	//set specified analysys for all states in nfa
 	opcode set_analyse(enum SATOKENS token);
 

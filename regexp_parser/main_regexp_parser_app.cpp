@@ -31,8 +31,10 @@ int main(){
 	}
 	printf("0x%x\n};\n", links[i]);
 
-	for(uint32_t state : accepting){
-		printf("%d ", state);
+	printf("const vector<pair<uint32_t, uint32_t>> regexp_analyse = {\n");
+	for(i = 0; i < accepting.size()-1; i++){
+		printf("\t{%d, %d},\n", accepting[i].first, accepting[i].second);
 	}
+	printf("\t{%d, %d}\n};", accepting[i].first, accepting[i].second);
 	printf("\n");
 }

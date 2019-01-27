@@ -5,7 +5,7 @@
 //function parses regular expression and builds respective automaton
 //on success - return 0
 //on failure - return -1
-int regex2nfa(string& regex, enum SATOKENS& token, nfa& new_nfa){
+int regex2nfa(string& regex, const enum SATOKENS token, nfa& new_nfa){
 	lex_str.inp_buf = regex;
 	lex_str.cur_pos = 0;
 

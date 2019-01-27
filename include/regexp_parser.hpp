@@ -3,4 +3,4 @@
 #include <types.hpp>
 #include <nfa.hpp>
 
-int regex2nfa(string& regex, enum SATOKENS& token, nfa& new_nfa);
+int regex2nfa(string& regex, const enum SATOKENS token, nfa& new_nfa);

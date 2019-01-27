@@ -34,20 +34,23 @@ BOOST_AUTO_TEST_CASE(NFA_check_links)
 BOOST_AUTO_TEST_CASE(NFA_check_accepting)
 {
 	nfa test_nfa;
-	const vector<uint32_t> res_expected = {2,4};
+	const vector<pair<uint32_t, uint32_t>> res_expected = {
+		{2, ID},
+		{4, COMMENT}
+	};
 
 	test_nfa.link_state("0@@1\\1@a@2\\0@@3\\3@b@4\\");
 
 	test_nfa.set_accepting(2,ID);
 	test_nfa.set_accepting(4,COMMENT);
 
-	vector<uint32_t> res_obtained = test_nfa.get_accepting();
+	vector<pair<uint32_t, uint32_t>> res_obtained = test_nfa.get_accepting();
 	sort(res_obtained.begin(), res_obtained.end());
 	BOOST_CHECK_MESSAGE(res_obtained == res_expected, 
 		"res_obtained = {" 	
-		<< to_string(res_obtained[0]) << to_string(res_obtained[1]) 
+		<< to_string(res_obtained[0].first) << to_string(res_obtained[1].first)
 		<< "} instead of {" 	
-		<< to_string(res_expected[0]) << to_string(res_expected[1]) 
+		<< to_string(res_expected[0].first) << to_string(res_expected[1].first)
 		<< "}");
 
 }
