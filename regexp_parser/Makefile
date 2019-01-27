@@ -3,7 +3,9 @@ LOCAL_LDFLAGS=-lnfa
 DEPS=
 
 all-obj = $(wildcard *.cpp)
-obj = $(patsubst %.cpp,%.o,$(filter-out test%,$(all-obj)))
+obj = $(patsubst %.cpp,%.o,$(filter-out test%,$(filter-out main%,$(all-obj))))
+obj-main = $(patsubst %.cpp,%.o,$(filter main%,$(all-obj)))
+
 include $(TOPDIR)/Makefile.test
 
 yacc	:= $(wildcard *.ypp)
@@ -21,10 +23,13 @@ $(yacc-src):
 	echo =======$@
 	bison -v -d $(patsubst %.tab.cpp,%.ypp,$@)
 
-all: $(DEPS) build $(RUN_TEST) install 
+all: $(DEPS) build app $(RUN_TEST) install 
 
 build:  $(obj)
 	$(AR) rcs lib$(target).a $(obj)
+
+app: $(obj-main)
+	$(CXX) $(CXXFLAGS) -o $(target) $(obj-main) $(obj) -L. -l$(target) $(LOCAL_LDFLAGS) $(LDFLAGS)	
 
 install:
 	cp lib$(target).a $(BUILD_DIR)
