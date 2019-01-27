@@ -1,12 +1,12 @@
-target = lexer
-LOCAL_LDFLAGS=-lnfa -lregexp
-DEPS= 
+target=
+LOCAL_LDFLAGS=
+DEPS= authomaton symb_tbl
 
 all-obj = $(wildcard *.cpp)
 obj = $(patsubst %.cpp,%.o,$(filter-out test%,$(all-obj)))
 include $(TOPDIR)/Makefile.test
 
-all: $(DEPS) build $(RUN_TEST) install 
+all: $(DEPS)
 
 build:  $(obj)
 	$(AR) rcs lib$(target).a $(obj)

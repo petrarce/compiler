@@ -7,7 +7,7 @@ export CXXFLAGS += -I$(TOPDIR)/include -g --std=c++17 -fsanitize=address
 export CFLAGS += -I$(TOPDIR)/include -g -fsanitize=address
 export LDFLAGS += -L$(BUILD_DIR) -ldl
 
-SUBDIRS = lexer parser symb_tbl
+SUBDIRS = core regexp_parser lexer parser
 
 all: $(SUBDIRS)
 
