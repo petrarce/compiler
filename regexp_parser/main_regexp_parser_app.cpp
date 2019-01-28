@@ -1,6 +1,6 @@
 #include <iostream>
 #include <lexer_regexps.hpp>
-#include <regexp_parser.hpp>
+#include "regexp_parser.hpp"
 
 using namespace std;
 
@@ -20,8 +20,8 @@ int main(){
 	string links = regexp_nfa.get_links();
 	auto accepting = regexp_nfa.get_accepting();
 
-	printf("#include <vector>");
-	printf("const vector regexp_links = {\n\t", links[i]);
+	printf("#include <vector>\n");
+	printf("const string regexp_links = {\n\t", links[i]);
 	for(i = 0; i < links.size()-1; i++){
 		if(!(i%8) && i != 0){
 			printf("0x%x,\n\t", links[i]);

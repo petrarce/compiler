@@ -1,5 +1,5 @@
 #include <nfa.hpp>
-#include <regexp_parser.hpp>
+#include "regexp_parser.hpp"
 #include "global_objects.hpp"
 #include "regexp_grammar.tab.hpp"
 //function parses regular expression and builds respective automaton

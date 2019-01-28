@@ -380,11 +380,11 @@ opcode nfa::set_accepting(uint32_t state, enum SATOKENS analyse)
 	return STATUS_OK;
 }
 
-vector<pair<uint32_t, uint32_t>> nfa::get_accepting(){
-	vector<pair<uint32_t, uint32_t>> accepting;
+vector<pair<uint32_t, SATOKENS>> nfa::get_accepting(){
+	vector<pair<uint32_t, SATOKENS>> accepting;
 	for(const state_c& st : this->states){
 		if(st.is_accepting){
-			pair<uint32_t, uint32_t> new_pair;
+			pair<uint32_t, SATOKENS> new_pair;
 			new_pair.first 	= st.id;
 			new_pair.second = st.analyse;
 			accepting.push_back(new_pair);

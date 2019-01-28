@@ -1,5 +1,5 @@
 /*declarations*/
-%token Int Real Id If Else While Literal
+%token Type Id If Else While Literal
 %start PROG
 %left '-' '+'
 %left '*' '/'
@@ -50,8 +50,7 @@ VARLIST:			Id',' VARLIST 					/*VARLIST0.ok = !is_Id_in_stbl(Id.val)&&VARLIST2.o
 													/*deploy_stbl(Id.val, VARLIST0.type)*/
 				|	Id '=' EXPR 					/*VARLIST0.ok = !is_Id_in_stbl(Id.val)&&EXPR3.ok*/
 													/*deploy_stbl(Id.val, VARLIST0.type)*/
-TYPE: 				Int 							/*TYPE.val=Int.val*/
-				| 	Real 							/*TYPE.val=Real.val*/
+TYPE: 				Type 							/*TYPE.val=Type.val*/
 
 
 

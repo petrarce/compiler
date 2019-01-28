@@ -21,7 +21,7 @@ class state_c
 public:
 	uint32_t id;
 	uint8_t is_accepting;
-	uint32_t analyse;
+	SATOKENS analyse;
 	vector<trans_table_t> transition_table;
 
 	opcode transition_table_add_new_entry(uint8_t, vector<uint32_t>);
