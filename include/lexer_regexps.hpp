@@ -13,12 +13,13 @@ using namespace std;
 				"k|l|z|x|c|v|b|n|m|_|Q|W|E|R|T|Y|" \
 				"U|I|O|P|A|S|D|F|G|H|J|K|L|Z|X|C|V|B|N|M"
 #define NUMB "1|2|3|4|5|6|7|8|9|0"
-#define SPEC "\\(|\\)|\\{|\\}|;|:"
+#define SPEC "\\(|\\)|\\{|\\}|;|:|`|'"
 #define OPER "\\-\\-|++|\\-|+|\\*|/|==|=|\\|\\||\\&\\&|\\||\\&|>|<|%"
 #define DELIM " |\t|\n|\r"
+#define ALL_SYMB "("NUMB"|"SPEC"|"SYMB"|"DELIM")"
 
 static vector<string> regexp_vec = {
-	"/\\*("SYMB"|"NUMB"|"SPEC"|"OPER"|"DELIM")*\\*/",
+	"/\\*(("ALL_SYMB"|/)|(\\*\\**"ALL_SYMB"))*\\*\\**/",
 	"//("SYMB"|"NUMB"|"SPEC"|"OPER"| |\t)*",
 	DELIM,
 	"int",

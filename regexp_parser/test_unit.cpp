@@ -2,19 +2,29 @@
 #include <boost/test/included/unit_test.hpp>
 #include <types.hpp>
 #include <nfa.hpp>
+#include <lexer_regexps.hpp>
 #include "regexp_parser.hpp"
-
 
 
 BOOST_AUTO_TEST_CASE(REGEXP_check_parser)
 {
-	string str_regexp = "(a*bc\\*)|(c*ab)";
 	nfa test_nfa;
+	string str_regexp = "/\\*(("ALL_SYMB"|/)|(\\*\\**"ALL_SYMB"))*\\*\\**/";
+
+	regex2nfa(str_regexp, COMMENT, test_nfa);
+	string inp_str = "/*hello this is\n\t comment/////******/";
+	analyse_map_s* res = test_nfa.nfa_bt_next(inp_str);
+	BOOST_REQUIRE_MESSAGE(res, "something wrong here");
+	BOOST_CHECK_MESSAGE(res->analysed_str == "/*hello this is\n\t comment/////******/", 
+							"something wrong here");
+	delete res;
+
+	str_regexp = "(a*bc\\*)|(c*ab)";
 	regex2nfa(str_regexp, ID, test_nfa);
 
 	test_nfa.nfa_reset();
-	string inp_str = "abc*";
-	analyse_map_s* res = test_nfa.nfa_bt_next(inp_str);
+	inp_str = "abc*";
+	res = test_nfa.nfa_bt_next(inp_str);
 	BOOST_CHECK_MESSAGE(res, "something wrong here");
 	delete res;
 
@@ -60,8 +70,6 @@ BOOST_AUTO_TEST_CASE(REGEXP_check_parser)
 	res = test_nfa.nfa_bt_next(inp_str);
 	BOOST_CHECK_MESSAGE(!res, "something wrong here");
 	delete res;
-
-
 
 
 

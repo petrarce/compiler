@@ -4,23 +4,40 @@
 
 BOOST_AUTO_TEST_CASE(LEXER_test_tokenisation)
 {
-	lexer test_lexer("int while /*comment*/ id");
+	lexer test_lexer(	"//comment1\n"
+					 	"/*comment2////****/ "
+						"int "
+						"real "
+						"if "
+						"else "
+						"while "
+						"{ "
+						"+ "
+						"\"string literal\" "
+						"123332 "
+						"some_id1 ");
 
+	vector<uint32_t> tokens_arr;
+	vector<uint32_t> tokens_arr_expected = {
+		Type, Type, If, Else, 
+		While, '{', '+', Literal, Literal, Id };
 	uint32_t token = test_lexer.get_next_token();
-	BOOST_CHECK_MESSAGE(token == Type, "something wrong here");
-	BOOST_CHECK_MESSAGE(test_lexer.get_cur_token_val() == "int", "something wrong here");
+	while(token){
+		tokens_arr.push_back(token);
+		token = test_lexer.get_next_token();
+	}
 
-	token = test_lexer.get_next_token();
-	BOOST_CHECK_MESSAGE(token == While, "something wrong here");
-	BOOST_CHECK_MESSAGE(test_lexer.get_cur_token_val() == "while", "something wrong here");
-
-	token = test_lexer.get_next_token();
-	BOOST_CHECK_MESSAGE(token == Id, "something wrong here");
-	BOOST_CHECK_MESSAGE(test_lexer.get_cur_token_val() == "id", "something wrong here");
-
-	token = test_lexer.get_next_token();
-	BOOST_CHECK_MESSAGE(token == 0, "something wrong here");
-
+	if(tokens_arr != tokens_arr_expected){
+		BOOST_ERROR("bas analysis!");
+		printf("expected:\n");
+		for(uint32_t i : tokens_arr_expected){
+			printf("%d ", i);
+		}
+		printf("\nreceived:\n");
+		for(uint32_t i : tokens_arr){
+			printf("%d ", i);
+		}
+	}
 
 
 }
