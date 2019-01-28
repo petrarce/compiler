@@ -19,8 +19,8 @@ export LDFLAGS += -pg
 else
 
 ifeq ($(CONFIG_RELEASE), y)
-export CXXFLAGS += -O2 -Wall
-export CFLAGS += -O2 -Wall
+export CXXFLAGS += -O3 -Wall
+export CFLAGS += -O3 -Wall
 endif
 
 endif

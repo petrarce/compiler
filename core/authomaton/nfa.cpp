@@ -38,8 +38,8 @@ void push_states_with_offset(nfa& temp_nfa, nfa& nfa_x)
 		//add offset to state id
 		st.id += offset;
 		//add offset to state_ids in transition table
-		for(int i = 0; i < st.transition_table.size(); i++){
-			for(int j = 0; j < st.transition_table[i].state_ids.size(); j++){
+		for(size_t i = 0; i < st.transition_table.size(); i++){
+			for(size_t j = 0; j < st.transition_table[i].state_ids.size(); j++){
 				st.transition_table[i].state_ids[j] += offset;
 			}
 		}
@@ -112,10 +112,10 @@ nfa 	nfa::nfa_convert_concat(nfa& nfa_a, nfa& nfa_b)
 		//increase id of state		
 		st.id += offset;
 		//increase state_ids in transition table
-		for(int i = 0; i < st.transition_table.size(); i++){
+		for(size_t i = 0; i < st.transition_table.size(); i++){
 			if(st.transition_table[i].symb == 0)
 				continue;
-			for(int j = 0; j <  st.transition_table[i].state_ids.size(); j++){
+			for(size_t j = 0; j <  st.transition_table[i].state_ids.size(); j++){
 				st.transition_table[i].state_ids[j] += offset;
 			}
 		}
@@ -147,11 +147,13 @@ opcode nfa::init_cur_state_list()
 {
 	this->cur_state_list.clear();
 	cur_state_list.push_back(0);
+	return STATUS_OK;
 }
 
 opcode nfa::deinit_cur_state_list()
 {
 	this->cur_state_list.clear();
+	return STATUS_OK;
 }
 
 
@@ -168,7 +170,7 @@ opcode nfa::link_state(uint32_t state1, char symb, uint32_t state2)
 	if(this->states.size() < (state_highest + 1)){ //state ids are started from 0
 		uint32_t max_state_id = this->states.back().id;
 		this->states.resize(state_highest + 1);
-		for(int i = max_state_id + 1; i < this->states.size(); i++){
+		for(size_t i = max_state_id + 1; i < this->states.size(); i++){
 			this->states[i].id = i;
 		}
 	}
@@ -179,15 +181,16 @@ opcode nfa::link_state(uint32_t state1, char symb, uint32_t state2)
 
 opcode nfa::link_state(uint32_t state1, const string& symbs, uint32_t state2)
 {
-	opcode status;
 	//if string is empty link failed states with eps transition
-	if(!symbs.size())
+	if(!symbs.size()){
 		link_state(state1, EPS, state2);
+	}
 
-	for(char c : symbs)
+	for(char c : symbs){
 		link_state(state1, c, state2);
+	}
 
-	return status;
+	return STATUS_OK;
 }
 
 //simple input parser overload
@@ -301,7 +304,7 @@ analyse_map_s* nfa::nfa_bt_next(string& token)
 
 	nfa_reset();
 	nfa_clause();
-	for (int i = 0; i < token.size(); i++){
+	for (size_t i = 0; i < token.size(); i++){
 		nfa_next(token[i]);
 		sort(this->cur_state_list.begin(), this->cur_state_list.end());
 		state = nfa_status();
@@ -328,7 +331,6 @@ analyse_map_s* nfa::nfa_bt_next(string& token)
 }
 opcode nfa::nfa_bt_run(string& token, vector<string>& strs, vector<uint32_t> ignore)
 {
-	opcode state;
 	analyse_map_s* analyse_map;
 	while(token.size()){
 		analyse_map = nfa_bt_next(token);
@@ -371,6 +373,7 @@ opcode nfa::set_accepting(vector<uint32_t> states, enum SATOKENS analyse)
 		this->states[st].is_accepting 	= true;
 		this->states[st].analyse		= analyse;
 	}
+	return STATUS_OK;
 }
 
 opcode nfa::set_accepting(uint32_t state, enum SATOKENS analyse)
@@ -396,7 +399,7 @@ vector<pair<uint32_t, SATOKENS>> nfa::get_accepting(){
 
 opcode nfa::set_analyse(enum SATOKENS token){
 
-	for(int i = 0; i < this->states.size(); i++)		{
+	for(size_t i = 0; i < this->states.size(); i++)		{
 		this->states[i].analyse = token;
 	}
 	return STATUS_OK;
