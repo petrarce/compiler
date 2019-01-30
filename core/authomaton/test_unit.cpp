@@ -141,3 +141,19 @@ BOOST_AUTO_TEST_CASE(NFA_check_convertions){
 
 
 }
+
+BOOST_AUTO_TEST_CASE(NFA_check_optimisation)
+{
+
+	nfa test_nfa;
+	test_nfa.link_state("0@@1\\1@a@2\\2@b@3\\0@@5\\5@t@6\\6@r@7\\");
+
+	string noptLinks = test_nfa.get_links();
+	test_nfa.nfa_optimise();
+	string optLinks = test_nfa.get_links();
+
+	BOOST_CHECK_MESSAGE(noptLinks == optLinks, "something wrong here"
+												<< "noptLinks: " << noptLinks << "\n"
+												<< "optLinks: " << optLinks << "\n"	);
+
+}

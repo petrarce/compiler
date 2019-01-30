@@ -11,6 +11,7 @@ int regex2nfa(string& regex, const enum SATOKENS token, nfa& new_nfa){
 
 	if(yyparse() == 0){
 		new_nfa = final_nfa;
+		new_nfa.nfa_optimise();
 		new_nfa.set_analyse(token);
 		return 0;
 	} else {

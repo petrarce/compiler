@@ -19,6 +19,7 @@ typedef struct {
 class nfa
 {
 private:
+	vector<char> alphabet;
 	vector<state_c> states; 			//states of the automaton
 	vector<uint32_t> cur_state_list;	//states, which are currently active in automaton
 	vector<vector<uint32_t>> bt_log;
@@ -28,6 +29,7 @@ private:
 	opcode deinit_cur_state_list();
 
 
+	opcode nfa_clause(vector<uint32_t>& state_list);
 	opcode nfa_clause();
 	vector<uint32_t>  transition_get_next_states(uint32_t , uint8_t );
 	opcode nfa_bt_log_save(uint32_t state,uint32_t position);
@@ -58,7 +60,7 @@ public:
 
 
 	opcode nfa_reset();
-
+	opcode nfa_optimise();
 
 
 	nfa();

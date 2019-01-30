@@ -3,6 +3,9 @@
 #include <cstring>
 #include <algorithm>
 #include <types.hpp>
+#include <memory>
+#include <queue>
+#include <map>
 class inv_arg_ex inv_arg_ex_obj;
 class empty_str_ex empty_str_ex_obj;
 
@@ -31,6 +34,19 @@ static void my_set_union(vector<uint32_t>& dest, vector<uint32_t>& src)
 	return;
 }
 
+static opcode append_aplphabet(vector<char>& dst_alphabet, vector<char>& src_alphabet)
+{
+	assert(dst_alphabet.size() == src_alphabet.size());
+
+	for(int i = 0; i < dst_alphabet.size(); i++){
+		if(dst_alphabet[i] || !src_alphabet[i]){
+			continue;
+		}
+		dst_alphabet[i] = src_alphabet[i];
+	}
+	return STATUS_OK;
+}
+
 void push_states_with_offset(nfa& temp_nfa, nfa& nfa_x)
 {
 	uint32_t offset = temp_nfa.states.size();
@@ -47,6 +63,7 @@ void push_states_with_offset(nfa& temp_nfa, nfa& nfa_x)
 		temp_nfa.states.push_back(st);
 	}
 
+	append_aplphabet(temp_nfa.alphabet, nfa_x.alphabet);
 }
 
 
@@ -125,6 +142,7 @@ nfa 	nfa::nfa_convert_concat(nfa& nfa_a, nfa& nfa_b)
 	//link intermediate state with first state of nfa_b
 	temp_nfa.link_state(intermediate.id, EPS, offset);
 	//return nfa_a
+	append_aplphabet(temp_nfa.alphabet, nfa_b.alphabet);
 	return temp_nfa;
 	//append alphabet from nfa_b to nfa_a
 
@@ -174,7 +192,7 @@ opcode nfa::link_state(uint32_t state1, char symb, uint32_t state2)
 			this->states[i].id = i;
 		}
 	}
-
+	this->alphabet[symb] = symb;
 	status = states[state1].transition_table_add_entry(symb, state2);
 	return status;
 }
@@ -225,7 +243,7 @@ opcode nfa::link_state(const string& str)
 			symbs.clear();
 		} else
 		{
-			cout << "failed to parse string" << symbs << endl;
+			cout << "[FATAL_ERROR] failed to parse links... you better start debugging" << symbs << endl;
 			exit(STATUS_NOK);
 		}
 
@@ -273,19 +291,25 @@ uint32_t nfa::nfa_status()
 
 }
 
-opcode nfa::nfa_clause()
+opcode nfa::nfa_clause(vector<uint32_t>& state_list)
 {
 	vector<uint32_t> tmp_state_list;
 	vector<uint32_t> tmp_states_eps;
-	tmp_state_list = this->cur_state_list;
+	tmp_state_list = state_list;
 	do{
-		this->cur_state_list = tmp_state_list;
-		for(uint32_t st : this->cur_state_list){
+		state_list = tmp_state_list;
+		for(uint32_t st : state_list){
 			tmp_states_eps = transition_get_next_states(st, EPS);
 			my_set_union(tmp_state_list, tmp_states_eps);
 		}
-	}while(this->cur_state_list != tmp_state_list);
+	}while(state_list != tmp_state_list);
 	return STATUS_OK;
+}
+
+
+opcode nfa::nfa_clause()
+{
+	return nfa_clause(this->cur_state_list);
 }
 
 opcode nfa::nfa_bt_log_save(uint32_t state,uint32_t position)
@@ -353,6 +377,70 @@ opcode nfa::nfa_reset()
 	return STATUS_OK;
 }
 
+static string str_from_vect(vector<uint32_t>& vec)
+{
+	string	str;
+	for(uint32_t val : vec){
+		str.append(to_string(val));
+	}
+	return str;
+}
+
+opcode nfa::nfa_optimise()
+{
+	queue<vector<uint32_t>> 	todoList;
+	map<string, uint32_t>		doneList;
+	vector<uint32_t> 			st_cur;
+	vector<uint32_t> 			st_next;
+	uint32_t 					st_count = 0;
+	nfa 						optimised_nfa;
+
+	nfa_clause();
+	st_cur = this->cur_state_list;
+	todoList.push(st_cur);
+	doneList.insert(pair<string, int>(str_from_vect(st_cur), st_count));
+	st_count++;
+
+	while(!todoList.empty()){
+		st_cur = todoList.front();
+		assert(doneList.find(str_from_vect(st_cur)) != doneList.end());
+		uint32_t st1 = doneList.find(str_from_vect(st_cur))->second;
+		uint32_t st2;
+		todoList.pop();
+		for(char symb : this->alphabet){
+			if(!symb || symb == EPS){
+				continue;
+			}
+
+			this->cur_state_list = st_cur;
+			nfa_next(symb);
+			if(!this->cur_state_list.size()){
+				continue;
+			}
+			
+			auto find_iter = doneList.find(str_from_vect(this->cur_state_list));
+			if(find_iter == doneList.end()){
+				todoList.push(this->cur_state_list);
+				doneList.insert(pair<string, int>(str_from_vect(this->cur_state_list), st_count));
+				st2 = st_count;
+				st_count++;
+			} else {
+				st2 = find_iter->second;
+			}
+			optimised_nfa.link_state(st1, symb, st2);
+			
+			for(uint32_t st : this->cur_state_list){
+				if(this->states[st].is_accepting){
+					optimised_nfa.set_accepting(st2, this->states[st].analyse);
+					break;
+				}
+			}
+		}
+	}
+ 	*this = optimised_nfa;
+	return STATUS_OK;
+}
+
 void nfa::nfa_next(char symb)
 {
 	vector<uint32_t> new_cur_state_list;
@@ -409,6 +497,10 @@ nfa::nfa()
 {	
 	this->states.resize(1);
 	this->states[0].id = 0;
+	this->alphabet.resize(256);
+	for(char& c :  this->alphabet){
+		c = 0;
+	}
 	init_cur_state_list();
 }
 
