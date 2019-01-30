@@ -7,21 +7,23 @@ export CXXFLAGS += -I$(TOPDIR)/include -g --std=c++17
 export CFLAGS += -I$(TOPDIR)/include -g
 export LDFLAGS += -L$(BUILD_DIR) -ldl
 
+
+
+ifeq ($(CONFIG_RELEASE), y)
+export CXXFLAGS += -O3 -Wall
+export CFLAGS += -O3 -Wall
+else
+	
+ifeq ($(CONFIG_PROFILE), y)
+export CXXFLAGS += -pg -O0
+export CFLAGS += -pg -O0
+export LDFLAGS += -pg
+endif
 ifeq ($(CONFIG_MEMCHECK), y)
 export CXXFLAGS += -fsanitize=address
 export CFLAGS += -fsanitize=address
 endif
 
-ifeq ($(CONFIG_PROFILE), y)
-export CXXFLAGS += -pg -O0
-export CFLAGS += -pg -O0
-export LDFLAGS += -pg
-else
-
-ifeq ($(CONFIG_RELEASE), y)
-export CXXFLAGS += -O3 -Wall
-export CFLAGS += -O3 -Wall
-endif
 
 endif
 
