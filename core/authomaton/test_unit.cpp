@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(NFA_check_optimisation)
 	test_nfa.nfa_optimise();
 	string optLinks = test_nfa.get_links();
 
-	BOOST_CHECK_MESSAGE(noptLinks == optLinks, "something wrong here"
+	BOOST_CHECK_MESSAGE(optLinks == "0@a@1\\0@t@2\\1@b@3\\2@r@4\\", "something wrong here\n"
 												<< "noptLinks: " << noptLinks << "\n"
 												<< "optLinks: " << optLinks << "\n"	);
 
