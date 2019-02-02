@@ -9,13 +9,13 @@
 BOOST_AUTO_TEST_CASE(REGEXP_check_parser)
 {
 	nfa test_nfa;
-	string str_regexp = "/\\*(("ALL_SYMB"|/)|(\\*\\**"ALL_SYMB"))*\\*\\**/";
+	string str_regexp = "/\\*((a|/)|(\\*\\**a))*\\*\\**/";
 
 	regex2nfa(str_regexp, COMMENT, test_nfa);
-	string inp_str = "/*hello this is\n\t comment/////******/";
+	string inp_str = "/*aaaaaaa/////******/";
 	analyse_map_s* res = test_nfa.nfa_bt_next(inp_str);
 	BOOST_REQUIRE_MESSAGE(res, "something wrong here");
-	BOOST_CHECK_MESSAGE(res->analysed_str == "/*hello this is\n\t comment/////******/", 
+	BOOST_CHECK_MESSAGE(res->analysed_str == "/*aaaaaaa/////******/", 
 							"something wrong here");
 	delete res;
 
