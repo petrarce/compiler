@@ -1,16 +1,28 @@
 /*declarations*/
-%token Type Id If Else While Literal
+%token Type Id If Else While Literal Eq Neq
 %start PROG
+%left '<' '>' Eq Neq
 %left '-' '+'
 %left '*' '/'
 %left '%'
 %{
 #include <iostream>
+#include <lexer.hpp>
 #include <while_grammar.tab.hpp>
+#include <fstream>
 
 using namespace std;
+#ifdef DEBUG_PARSER
+#define pdbg(msg, args...) printf( msg, ##args)
+#else
+#define pdbg(msg, args...)
+#endif
 
-//TODO:redefine YYSTYPE to custom type	
+//TODO:redefine YYSTYPE to custom type
+lexer *ptr_lex;	
+#define yylex ptr_lex->get_next_token
+#define yytext	ptr_lex->get_cur_token_val().data()
+
 
 #ifndef yylex
 #define yylex def_yylex
@@ -24,70 +36,105 @@ int def_yylex();
 %}
 %%
 /*rules*/
-PROG: 				STMT 							/*PROG.ok = STMT.ok*/
+PROG: 				STMT 							{pdbg("PROG=>STMT\n");}/*PROG.ok = STMT.ok*/
 
-STMT: 				DEF STMT 						/*STMT0.ok = DEF1.ok && STMT2.ok, */
-				| 	_STMT STMT 						/*STMT0.ok = _STMT.ok && STMT2.ok*/
-				| 	_STMT 							/*STMT0.ok=STMT1.ok*/
+STMT: 				DEF STMT 						{pdbg("STMT=>DEF STMT\n");}/*STMT0.ok = DEF1.ok && STMT2.ok, */
+				| 	_STMT STMT 						{pdbg("STMT=>_STMT STMT\n");}/*STMT0.ok = _STMT.ok && STMT2.ok*/
+				| 	_STMT 							{pdbg("STMT=>_STMT\n");}/*STMT0.ok=STMT1.ok*/
 
-_STMT:			 	IF 								/*_STMT0.ok=IF1.ok*/
-				|	WHILE 							/*_STMT0.ok=WHILE1.ok*/
-				|	ASSIGN							/*_STMT0.ok=ASSIGN1.ok*/
-				|	PROCEDURE						/*_STMT0.ok=PROCEDURE1.ok*/
+_STMT:			 	IF 								{pdbg("_STMT=>IF\n");}/*_STMT0.ok=IF1.ok*/
+				|	WHILE 							{pdbg("_STMT=>WHILE\n");}/*_STMT0.ok=WHILE1.ok*/
+				|	ASSIGN';'						{pdbg("_STMT=>ASSIGN;\n");}/*_STMT0.ok=ASSIGN1.ok*/
+				|	PROCEDURE';'					{pdbg("_STMT=>PROCEDURE;\n");}/*_STMT0.ok=PROCEDURE1.ok*/
 
-DEF:				DEF _DEF						/*DEF0.ok=DEF1.ok&&_DEF2.ok*/
-				|	_DEF 							/*DEF0.ok=_DEF1.ok*/
+DEF:				DEF _DEF						{pdbg("DEF=>DEF _DEF;\n");}/*DEF0.ok=DEF1.ok&&_DEF2.ok*/
+				|	_DEF 							{pdbg("DEF=>_DEF;\n");}/*DEF0.ok=_DEF1.ok*/
 
-_DEF: 				TYPE VARLIST';'					/*_DEF0.ok=VARLIST.ok*/
+_DEF: 				TYPE VARLIST';'					{pdbg("_DEF=>TYPE VARLIST;\n");}/*_DEF0.ok=VARLIST.ok*/
 													/*VARLIST2.type=TYPE1.val*/
-VARLIST:			Id',' VARLIST 					/*VARLIST0.ok = !is_Id_in_stbl(Id.val)&&VARLIST2.ok*/
+VARLIST:			ID',' VARLIST 					{pdbg("VARLIST=>ID, VARLIST\n", yytext);}/*VARLIST0.ok = !is_Id_in_stbl(Id.val)&&VARLIST2.ok*/
 													/*deploy_stbl(Id.val, VARLIST0.type)*/
 													/*VARLIST2.type=VARLIST0.type*/
-				|	Id '=' EXPR',' VARLIST    		/*VARLIST0.ok = !is_Id_in_stbl(Id.val)&&EXPR3.ok&&VARLIST5.ok*/
+				|	ID '=' EXPR',' VARLIST    		{pdbg("VARLIST=>ID=EXPR, VARLIST\n");}/*VARLIST0.ok = !is_Id_in_stbl(Id.val)&&EXPR3.ok&&VARLIST5.ok*/
 													/*deploy_stbl(Id.val, VARLIST0.type)*/
 													/*VARLIST5.type=VARLIST0.type*/
-				|	Id 								/*VARLIST0.ok = !is_Id_in_stbl(Id.val)*/
+				|	ID 								{pdbg("VARLIST=>ID=EXPR\n");}/*VARLIST0.ok = !is_Id_in_stbl(Id.val)*/
 													/*deploy_stbl(Id.val, VARLIST0.type)*/
-				|	Id '=' EXPR 					/*VARLIST0.ok = !is_Id_in_stbl(Id.val)&&EXPR3.ok*/
+				|	ID '=' EXPR 					{pdbg("VARLIST=>ID=EXPR\n");}	/*VARLIST0.ok = !is_Id_in_stbl(Id.val)&&EXPR3.ok*/
 													/*deploy_stbl(Id.val, VARLIST0.type)*/
-TYPE: 				Type 							/*TYPE.val=Type.val*/
+TYPE: 				Type 							{pdbg("TYPE=>Type=%s\n", yytext);}/*TYPE.val=Type.val*/
 
 
 
 
-IF:					If'('EXPR')''{'STMT'}'Else'{'STMT'}'	/*IF0.ok=EXPR3.ok && STMT6.ok && STMT10.ok*/
-WHILE:				While'('EXPR')''{'STMT'}'				/*IF0.ok=EXPR3.ok && STMT6.ok*/
-ASSIGN:				Id '=' EXPR';'							/*ASSIGN0.ok = is_Id_in_stbl(Id.val) && EXPR.ok*/
+IF:					If'('EXPR')''{'STMT'}'Else'{'STMT'}'	{pdbg("IF=>If(EXPR){STMT}Else{STMT}\n");}	/*IF0.ok=EXPR3.ok && STMT6.ok && STMT10.ok*/
+WHILE:				While'('EXPR')''{'STMT'}'				{pdbg("WHILE=>While(EXPR){STMT}\n");}	/*IF0.ok=EXPR3.ok && STMT6.ok*/
+ASSIGN:				ID '=' EXPR 							{pdbg("ASSIGN=>ID=EXPR\n");}	  		/*ASSIGN0.ok = is_Id_in_stbl(Id.val) && EXPR.ok*/
 
-PROCEDURE: 			Id'('ARGS')'';'							/*PROCEDURE0.ok=ARGS3.ok*/
-ARGS:				ARG 									/*ARGS0.ok = ARG1.ok*/
-				| 	ARG',' ARGS 							/*ARGS0.ok = ARG1.ok && ARGS3.ok*/
-ARG:				EXPR 									/*ARG0.ok = EXPR.ok*/
+PROCEDURE: 			ID'('ARGS')'							{pdbg("PROCEDURE=>ID(ARGS)\n");}/*PROCEDURE0.ok=ARGS3.ok*/
+				|	ID'('')'								{pdbg("PROCEDURE=>ID()\n");}
 
-EXPR: 				OBJ 									/*EXPR0.ok=OBJ.ok*/
-				| 	EXPR '+' EXPR 							/*EXPR0.ok=EXPR1.ok && EXPR3.ok*/
-				| 	EXPR '-' EXPR 							/*EXPR0.ok=EXPR1.ok && EXPR3.ok*/
-				| 	EXPR '*' EXPR 							/*EXPR0.ok=EXPR1.ok && EXPR3.ok*/
-				| 	EXPR '/' EXPR 							/*EXPR0.ok=EXPR1.ok && EXPR3.ok*/
-				| 	EXPR '%' EXPR 							/*EXPR0.ok=EXPR1.ok && EXPR3.ok*/
-				| 	'('EXPR')' 								/*EXPR0.ok=EXPR2.ok*/
+ARGS:				ARG 									{pdbg("ARGS=>ARG, ARGS\n");}	/*ARGS0.ok = ARG1.ok*/
+				| 	ARG',' ARGS 							{pdbg("ARGS=>ARG, ARGS\n");}	/*ARGS0.ok = ARG1.ok && ARGS3.ok*/
 
-OBJ:				Id 										/*OBJ0.ok = is_Id_in_stbl(Id.val)*/
-				| 	Literal 								/*OBJ0.ok = true*/
+ARG:				EXPR 									{pdbg("ARG=>EXPR\n");}		/*ARG0.ok = EXPR.ok*/
+
+EXPR: 				OBJ 									{pdbg("Expr=>Obj\n");}		/*EXPR0.ok=OBJ.ok*/
+				| 	EXPR '+' EXPR 							{pdbg("Expr=>Expr+Expr\n");} 	/*EXPR0.ok=EXPR1.ok && EXPR3.ok*/
+				| 	EXPR '-' EXPR 							{pdbg("Expr=>Expr-Expr\n");} 	/*EXPR0.ok=EXPR1.ok && EXPR3.ok*/
+				| 	EXPR '*' EXPR 							{pdbg("Expr=>Expr*Expr\n");} 	/*EXPR0.ok=EXPR1.ok && EXPR3.ok*/
+				| 	EXPR '/' EXPR 							{pdbg("Expr=>Expr/Expr\n");} 	/*EXPR0.ok=EXPR1.ok && EXPR3.ok*/
+				| 	EXPR '%' EXPR 							{pdbg("Expr=>Expr PRC Expr\n");} 	/*EXPR0.ok=EXPR1.ok && EXPR3.ok*/
+				|	EXPR '<' EXPR 							{pdbg("Expr=>Expr<Expr\n");}
+				|	EXPR '>' EXPR 							{pdbg("Expr=>Expr>Expr\n");}
+				|	EXPR Eq EXPR 							{pdbg("Expr=>Expr==Expr\n");}
+				|	EXPR Neq EXPR 							{pdbg("Expr=>Expr!=Expr\n");}		
+				| 	'('EXPR')' 								{pdbg("Expr=>(Expr)\n");}		/*EXPR0.ok=EXPR2.ok*/
+
+OBJ:				ID 										{pdbg("OBJ=>ID\n");}		/*OBJ0.ok = is_Id_in_stbl(Id.val)*/
+				| 	LITERAL 								{pdbg("OBJ=>LITERAL\n");}	/*OBJ0.ok = true*/
+				| 	PROCEDURE
+ID:				Id											{pdbg("ID=>Id=%s\n", yytext);}
+LITERAL: 		Literal											{pdbg("LITERAL=>Literal=%s\n", yytext);}
 
 %%
 /*programs*/
 void def_yyerror(char* str)
 {
-	printf("PARSING FAILURE: %s", str);
+	pdbg("PARSING FAILURE: %s\n", str);
 }
 
 int def_yylex()
 {
 	return 0;
 }
-
-int main()
+#ifdef DEBUG_PARSER
+static string read_test_file(ifstream& roFile)
 {
-	return yyparse();
+	stringstream file_buf;
+	file_buf << roFile.rdbuf();
+	return file_buf.str();
 }
+
+int main(int argc, char** argv)
+{
+	assert(argc != 2);
+	ifstream roFile;
+	roFile.open("inp.txt");
+	assert(roFile.is_open() == true);
+	string str_lexer = read_test_file(roFile);
+
+	//init lexer
+	ptr_lex = lexer::get_instance();
+	lexer& lex = *ptr_lex;
+	lex.set_inp_str(str_lexer);
+
+	if(yyparse()){
+		pdbg("PARSEING ERROR... check out this location:\n %s\n", lex.get_inp_str().data());
+		return -1;
+	}
+	pdbg("PARSING SUCCEED\n");
+	
+	return 0;
+}
+#endif

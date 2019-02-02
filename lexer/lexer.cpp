@@ -34,7 +34,6 @@ uint32_t lexer::get_next_token()
 	SATOKENS token = (SATOKENS)0;
 	analyse_map_s* analyse_next = NULL;
 	uint32_t res = 0;
-	size_t size;
 
 	//input was fully parsed - return finish
 
@@ -49,7 +48,7 @@ uint32_t lexer::get_next_token()
 
 		analyse_next = this->prod_nfa.nfa_bt_next(this->inp_str);
 		if(!analyse_next){
-			printf("LEXER ERROR:\n size=%d this->inp_str.size()=%d %s\n", size, this->inp_str.size(), this->inp_str.data());
+			printf("LEXER ERROR:\n %s\n", this->inp_str.data());
 			return (yytokentype)256;
 		}
 		token = analyse_next->analyse;
