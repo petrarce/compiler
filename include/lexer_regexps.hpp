@@ -14,7 +14,7 @@ using namespace std;
 				"U|I|O|P|A|S|D|F|G|H|J|K|L|Z|X|C|V|B|N|M"
 #define NUMB "1|2|3|4|5|6|7|8|9|0"
 #define SPEC "\\(|\\)|\\{|\\}|;|:|`|'"
-#define OPER "\\-\\-|++|\\-|+|\\*|/|==|=|\\|\\||\\&\\&|\\||\\&|>|<|%"
+#define OPER "\\-|+|\\*|/|=|\\||\\&|>|<|%"
 #define DELIM " |\t|\n|\r"
 #define ALL_SYMB "("NUMB"|"SPEC"|"SYMB"|"DELIM")"
 
@@ -27,6 +27,12 @@ static vector<string> regexp_vec = {
 	"if",
 	"else",
 	"while",
+	"==",
+	"!=",
+	"++",
+	"--",
+	"||",
+	"&&",
 	SPEC,
 	OPER,
 	"\"("DELIM"|"NUMB"|"SPEC"|"OPER"|"SYMB")*\"",
@@ -42,6 +48,12 @@ static vector<enum SATOKENS> regexp_analysis = {
 	IF,
 	ELSE,
 	WHILE,
+	OPEREQ,
+	OPERNEQ,
+	OPERINC,
+	OPERDEC,
+	OPEROR,
+	OPERAND,
 	SPECIAL,
 	OPERATOR,
 	LITERAL,

@@ -6,6 +6,15 @@
 
 using namespace std;
 
+lexer *lexer::instance = NULL;
+
+lexer* lexer::get_instance()
+{
+	if(!instance){
+		instance = new lexer();
+	}
+	return instance;
+}
 opcode lexer::set_inp_str(string str)
 {
 	this->inp_str = str;
@@ -25,13 +34,23 @@ uint32_t lexer::get_next_token()
 	SATOKENS token = (SATOKENS)0;
 	analyse_map_s* analyse_next = NULL;
 	uint32_t res = 0;
+	size_t size;
+
+	//input was fully parsed - return finish
 
 	do{
 		delete analyse_next;
 		analyse_next = NULL;
+
+		//end of string achived - finish lexic analyse
+		if(!this->inp_str.size()){
+			return (yytokentype)0;
+		}
+
 		analyse_next = this->prod_nfa.nfa_bt_next(this->inp_str);
 		if(!analyse_next){
-			return (yytokentype)0;
+			printf("LEXER ERROR:\n size=%d this->inp_str.size()=%d %s\n", size, this->inp_str.size(), this->inp_str.data());
+			return (yytokentype)256;
 		}
 		token = analyse_next->analyse;
 	}while(token == COMMENT || token == DELIMITER);
@@ -64,9 +83,21 @@ uint32_t lexer::get_next_token()
 		case LITERAL:
 			res = Literal;
 			break;
+		case OPEREQ:
+			res = Eq;
+			break;
+		case OPERNEQ:
+			res = Neq;
+			break;
+		case OPERAND:
+			//TODO: init all folowwing operators after creating links to them in parser
+		case OPEROR:
+		case OPERINC:
+		case OPERDEC:
 		case REGEXP:
-			assert(0);
 		default:
+			printf("ERROR: analyse_next->analyse=%s\n%s\n", la_str[analyse_next->analyse].data(),
+															this->cur_token_val.data());
 			assert(0);
 	}
 
@@ -75,17 +106,21 @@ uint32_t lexer::get_next_token()
 	return res;
 }
 
-
-lexer::lexer(string inp){
+lexer::lexer()
+{
 	prod_nfa.link_state(regexp_links);
 	for(const pair<uint32_t, uint32_t> st_accepting : regexp_analyse){
 		prod_nfa.set_accepting(st_accepting.first, (SATOKENS)st_accepting.second);
 	}
+}
 
+lexer::lexer(string inp){
+	lexer();
 	set_inp_str(inp);
 }
 
+
 lexer::~lexer()
 {
-
+	delete instance;
 }

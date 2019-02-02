@@ -18,6 +18,12 @@ enum SATOKENS
 	ELSE,
 	SPECIAL,
 	OPERATOR,
+	OPEREQ,
+	OPERNEQ,
+	OPERINC,
+	OPERDEC,
+	OPERAND,
+	OPEROR,
 	LITERAL,
 	REGEXP
 };
@@ -43,6 +49,12 @@ static vector<uint8_t> sa_tokens = {
 	ELSE,
 	SPECIAL,
 	OPERATOR,
+	OPEREQ,
+	OPERNEQ,
+	OPERINC,
+	OPERDEC,
+	OPERAND,
+	OPEROR,
 	LITERAL,
 	REGEXP
 };
@@ -56,6 +68,12 @@ static vector<string> la_str = {
 	"ELSE",
 	"SPECIAL",
 	"OPERATOR",
+	"OPEREQ",
+	"OPERNEQ",
+	"OPERINC",
+	"OPERDEC",
+	"OPERAND",
+	"OPEROR",
 	"LITERAL",
 	"REGEXP"
 };

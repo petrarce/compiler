@@ -341,7 +341,7 @@ analyse_map_s* nfa::nfa_bt_next(string& token)
 
 	if(!this->bt_log.size()){			//if dead - check if in backlog there was at list one accepting state
 
-		printf("string is incorrect: %s\n", token.begin());	//if previously no accepted states was entered - lexical analysis failed
+		//if previously no accepted states was entered - lexical analysis failed
 		delete analyse_map;
 		return NULL;
 	}

@@ -4,7 +4,8 @@
 
 BOOST_AUTO_TEST_CASE(LEXER_test_tokenisation)
 {
-	lexer test_lexer(	"//comment1\n"
+	lexer& test_lexer = *lexer::get_instance();
+	test_lexer.set_inp_str(	"//comment1\n"
 					 	"/*comment2////****/ "
 						"int "
 						"real "
@@ -15,12 +16,14 @@ BOOST_AUTO_TEST_CASE(LEXER_test_tokenisation)
 						"+ "
 						"\"string literal\" "
 						"123332 "
-						"some_id1 ");
+						"some_id1 "
+						"== "
+						"!= ");
 
 	vector<uint32_t> tokens_arr;
 	vector<uint32_t> tokens_arr_expected = {
 		Type, Type, If, Else, 
-		While, '{', '+', Literal, Literal, Id };
+		While, '{', '+', Literal, Literal, Id, Eq, Neq};
 	uint32_t token = test_lexer.get_next_token();
 	while(token){
 		tokens_arr.push_back(token);
@@ -28,7 +31,7 @@ BOOST_AUTO_TEST_CASE(LEXER_test_tokenisation)
 	}
 
 	if(tokens_arr != tokens_arr_expected){
-		BOOST_ERROR("bas analysis!");
+		BOOST_ERROR("bad analysis!");
 		printf("expected:\n");
 		for(uint32_t i : tokens_arr_expected){
 			printf("%d ", i);
