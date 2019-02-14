@@ -150,9 +150,10 @@ void varlist::eval_local_attributes(){
 	if(symb_table.find_entry(((type*)child_list[0])->get_type_val())){
 		printf("SEMANTIC ERROR: %s was already declared\n", ((type*)child_list[0])->get_type_val().data());
 		this->prog_ok = false;
+	} else {
+		status = symb_table.add_entry(((type*)child_list[0])->get_type_val(), "type - need to fix in future");
+		assert(status == STATUS_OK);
 	}
-	status = symb_table.add_entry(((type*)child_list[0])->get_type_val(), "type - need to fix in future");
-	assert(status == STATUS_OK);
 
 	if(!this->prog_ok){
 		pr_dbg("prog_ok=false");

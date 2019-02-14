@@ -24,7 +24,6 @@ class stbl{
 private:
 	vector<stbl_entry*> buckets;
 	uint32_t calc_hash(string id);
-	opcode clean_buckets();
 	static stbl* instance;
 public:
 	//Creates new entry with id and type and adds it to a bucket
@@ -33,6 +32,7 @@ public:
 	opcode del_entry(string id);
 	//Tries to find entry in a bucket. On success returns pointer to entry, on failure returns 0
 	stbl_entry* find_entry(string id);
+	opcode clean_buckets();
 	opcode print();
 	~stbl();
 	static stbl* get_instance(uint32_t size){
