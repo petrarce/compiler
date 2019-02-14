@@ -171,12 +171,18 @@ BOOST_AUTO_TEST_CASE(NFA_check_links)
 		root.add_child(&stmt1);
 
 	root.eval_attributes();
+	/*previously defined syntax attributed tree should be correct*/
 	BOOST_CHECK_MESSAGE(root.get_prog_ok()==true, "incorrect semantic analyse...");
 
+	/*id's that are in varlist are already deployed in symbol table
+	so new evaluation of vlist2 should find previously added to symbol table id
+	and yeld error*/
 	vlist2.eval_attributes();
 	BOOST_CHECK_MESSAGE(vlist2.get_prog_ok()==false, "incorrect semantic analyse...");
 
 	symb_tab.clean_buckets();
+	/*after cleanyng symbol table id1 is no more there, so 
+		expr12.eval_attributes should yeld semantic error*/
 	expr expr12(expr::EXPR1);
 		obj 	obj2(obj::OBJ1);
 			obj2.add_child(&id1);
