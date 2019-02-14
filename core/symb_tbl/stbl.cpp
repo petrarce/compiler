@@ -6,6 +6,8 @@
 
 using namespace std;
 
+stbl* stbl::instance = 0;
+
 opcode stbl_entry::set_last(stbl_entry* entry)
 {
 	assert(entry);
@@ -125,4 +127,5 @@ stbl::~stbl()
 {
 	clean_buckets();
 	buckets.clear();
+	delete instance;
 }

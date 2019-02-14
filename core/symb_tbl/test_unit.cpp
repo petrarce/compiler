@@ -6,10 +6,13 @@ using namespace std;
 
 BOOST_AUTO_TEST_CASE(STBL_check_symbol_table)
 {
-	stbl tbl(512);
-	tbl.add_entry("id1", "int");
-	tbl.add_entry("id2", "real");
-	tbl.add_entry("id3", "float");
+	stbl& tbl_other = *stbl::get_instance(512);
+	tbl_other.add_entry("id1", "int");
+	tbl_other.add_entry("id2", "real");
+	tbl_other.add_entry("id3", "float");
+
+	stbl& tbl = *stbl::get_instance(1080);
+
 
 	stbl_entry* entry = tbl.find_entry("id1");
 	BOOST_REQUIRE_MESSAGE(entry, "something wrong with symbol table");
