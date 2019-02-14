@@ -7,6 +7,22 @@
 
 using namespace std;
 
+#ifdef DEBUG
+#define assert(exp) { \
+	if(!(exp)) { \
+		pr_dbg("assertion failes: %s", #exp); \
+		cout << boost::stacktrace::stacktrace(); \
+		exit(-1); \
+	} \
+}
+
+#define pr_dbg(msg, args...) printf("[%s:%d] " msg "\n", __FILE__, __LINE__, ##args)
+#else
+#define pr_dbg(msg, args...) 
+#define assert(expr) 
+#endif
+
+
 enum SATOKENS
 {
 	COMMENT = 0,
@@ -78,12 +94,3 @@ static vector<string> la_str = {
 	"REGEXP"
 };
 
-#define pr_dbg(msg, args...) printf("[%s:%d] " msg "\n", __FILE__, __LINE__, ##args)
-
-#define assert(exp) { \
-	if(!(exp)) { \
-		pr_dbg("assertion failes: %s", #exp); \
-		cout << boost::stacktrace::stacktrace(); \
-		exit(-1); \
-	} \
-}

@@ -13,14 +13,15 @@ ifeq ($(CONFIG_RELEASE), y)
 export CXXFLAGS += -O3 -Wall
 export CFLAGS += -O3 -Wall
 else
-	
+export CXXFLAGS += -DDEBUG
+export LDFLAGS +=	-rdynamic
 ifeq ($(CONFIG_PROFILE), y)
 export CXXFLAGS += -pg -O0
 export CFLAGS += -pg -O0
 export LDFLAGS += -pg
 endif
 ifeq ($(CONFIG_MEMCHECK), y)
-export CXXFLAGS += -fsanitize=address
+export CXXFLAGS += -fsanitize=address 
 export CFLAGS += -fsanitize=address
 endif
 
@@ -29,7 +30,7 @@ endif
 
 
 
-SUBDIRS = core regexp_parser lexer parser
+SUBDIRS = core syntax_tree regexp_parser lexer parser syntax_tree
 
 all: $(SUBDIRS)
 

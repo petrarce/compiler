@@ -41,6 +41,10 @@ public:
 		}
 		return instance;
 	}
+	static stbl* get_instance(){
+		return get_instance(512);
+	}
+
 private:
 	stbl(uint32_t);
 	stbl(stbl& other){};
