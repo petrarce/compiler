@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stbl.hpp>
 #include <types.hpp>
-#include "node.hpp"
+#include <st_node.hpp>
 
 using namespace std;
 
@@ -374,5 +374,3 @@ void literal::eval_local_attributes(){
 }
 literal::literal(PROD_LITERAL tag_val) : node(tag_val){}
 literal::~literal(){}
-
-

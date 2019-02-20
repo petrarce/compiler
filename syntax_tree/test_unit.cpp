@@ -1,5 +1,5 @@
 #define BOOST_TEST_MODULE SYNTAX_TREE
-#include "node.hpp"
+#include <st_node.hpp>
 #include <stbl.hpp>
 #include <boost/test/included/unit_test.hpp>
 
