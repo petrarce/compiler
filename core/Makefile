@@ -1,6 +1,6 @@
 target=
 LOCAL_LDFLAGS=
-DEPS= authomaton symb_tbl
+DEPS= authomaton symb_tbl syntax_tree
 
 all-obj = $(wildcard *.cpp)
 obj = $(patsubst %.cpp,%.o,$(filter-out test%,$(all-obj)))

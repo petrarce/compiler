@@ -9,14 +9,14 @@ using namespace std;
 class node{
 protected:
 	int tag;
-	vector<node*> child_list;
+	vector<shared_ptr<node>> child_list;
 	/*attributes section*/
 	bool prog_ok;
 
 	virtual void eval_local_attributes()=0;
 	void eval_child_attributes();
 public:
-	void add_child(node* chld);
+	void add_child(shared_ptr<node> chld);
 	void eval_attributes();
 	bool get_prog_ok(){return prog_ok;};
 	node(int);

@@ -12,12 +12,12 @@ node::node(int tag_val):
 
 void node::eval_child_attributes()
 {
-	for(node* const child : this->child_list){
+	for(shared_ptr<node> const child : this->child_list){
 		child->eval_attributes();
 	}
 }
 
-void node::add_child(node* child)
+void node::add_child(shared_ptr<node> child)
 {
 	this->child_list.push_back(child);
 }
@@ -30,9 +30,6 @@ void node::eval_attributes()
 
 node::~node()
 {
-	/*for(const node* child : child_list){
-		delete child;
-	}*/
 	child_list.clear();
 }
 
@@ -147,11 +144,11 @@ void varlist::eval_local_attributes(){
 
 	stbl& symb_table = *stbl::get_instance();
 	opcode status = STATUS_OK;
-	if(symb_table.find_entry(((type*)child_list[0])->get_type_val())){
-		printf("SEMANTIC ERROR: %s was already declared\n", ((type*)child_list[0])->get_type_val().data());
+	if(symb_table.find_entry(((type*)child_list[0].get())->get_type_val())){
+		printf("SEMANTIC ERROR: %s was already declared\n", ((type*)child_list[0].get())->get_type_val().data());
 		this->prog_ok = false;
 	} else {
-		status = symb_table.add_entry(((type*)child_list[0])->get_type_val(), "type - need to fix in future");
+		status = symb_table.add_entry(((type*)child_list[0].get())->get_type_val(), "type - need to fix in future");
 		assert(status == STATUS_OK);
 	}
 
@@ -216,8 +213,8 @@ void assign::eval_local_attributes(){
 	stbl& symb_table = *stbl::get_instance();
 	switch(this->tag){
 		case assign::ASSIGN1:
-			if(!symb_table.find_entry(((id*)child_list[0])->get_id_val())){
-				printf("SEMANTIC ERROR: %s was not defined previously...\n", ((id*)child_list[0])->get_id_val().data());
+			if(!symb_table.find_entry(((id*)child_list[0].get())->get_id_val())){
+				printf("SEMANTIC ERROR: %s was not defined previously...\n", ((id*)child_list[0].get())->get_id_val().data());
 				this->prog_ok = false;
 				break;
 			}
@@ -320,8 +317,8 @@ void obj::eval_local_attributes(){
 	stbl& symb_table = *stbl::get_instance();
 	switch(this->tag){
 		case obj::OBJ1:
-			if(!symb_table.find_entry(((id*)child_list[0])->get_id_val())){
-				printf("SEMANTIC ERROR: %s was not defined previously...\n", ((id*)child_list[0])->get_id_val().data());
+			if(!symb_table.find_entry(((id*)child_list[0].get())->get_id_val())){
+				printf("SEMANTIC ERROR: %s was not defined previously...\n", ((id*)child_list[0].get())->get_id_val().data());
 				this->prog_ok = false;
 				break;
 			}

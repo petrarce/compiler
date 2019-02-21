@@ -30,7 +30,7 @@ endif
 
 
 
-SUBDIRS = core syntax_tree regexp_parser lexer parser syntax_tree
+SUBDIRS = core regexp_parser lexer parser
 
 all: $(SUBDIRS)
 
